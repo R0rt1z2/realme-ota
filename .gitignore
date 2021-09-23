@@ -1,0 +1,3 @@
+*.json
+realme_ota/utils/__pycache__
+build/
