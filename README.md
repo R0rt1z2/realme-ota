@@ -26,7 +26,7 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
   -c SERVER, --server SERVER
-                        Use specific server for the request (GL = 0, CN = 1).
+                        Use specific server for the request (GL = 0, CN = 1, IN = 2).
   -i IMEI, --imei IMEI  Use custom IMEI for the request.
   -t TIMEOUT, --timeout TIMEOUT
                         Use custom timeout for the request.
