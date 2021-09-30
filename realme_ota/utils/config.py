@@ -2,6 +2,7 @@
 GL_URL = "https://ifota.realmemobile.com/post/Query_Update"
 CN_URL = "https://iota.coloros.com/post/Query_Update"
 IN_URL = "https://ifota-in.realmemobile.com/Query_Update"
+EU_URL= "https://ifota-eu.realmemobile.com/post/Query_Update"
 
 # Default timeout for requests
 TIMEOUT = 30
