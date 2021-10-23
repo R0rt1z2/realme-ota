@@ -23,72 +23,106 @@ def die(msg, ec, log_level = 0):
 
 def main():
     parser = ArgumentParser()
-    parser.add_argument("product_model", help="Product Model (ro.product.name).")
+    parser.add_argument("product_model", type=str, help="Product Model (ro.product.name).")
     parser.add_argument("ota_version", help="OTA Version (ro.build.version.ota).")
+    parser.add_argument("rui_version", help="RealmeUI Version (1, 2).")
     parser.add_argument("-c", "--server", type=int, default=0, help="Use specific server for the request (GL = 0, CN = 1, IN = 2, EU = 3).")
-    parser.add_argument("-i", "--imei", type=int, help="Use custom IMEI for the request.")
     parser.add_argument("-t", "--timeout", type=int, help="Use custom timeout for the request.")
-    parser.add_argument("-a", "--android", type=str, help="Use custom android version for the request.")
-    parser.add_argument("-r", "--root", type=str, help="Use custom root status for the request.")
     parser.add_argument("-d", "--dump", type=str, help="Save request response into file.")
     parser.add_argument("-o", "--only", type=str, help="Only show the desired value from the request.")
     parser.add_argument("-s", "--silent", action="store_true", help="Enable silent output (purge logging).")
     parser.add_argument("-v", "--verbosity", type=int, choices=[0, 1], default=1, help="Increase or decrease verbosity.")
+
     args = parser.parse_args()
 
     if args.verbosity == 0:
         logger.init(0)        
     else:
         logger.init(1)
-
+        
     PRODUCT = args.product_model
     OTA_VERSION = args.ota_version
     PRODUCT_IDENTIFIER = OTA_VERSION.split(".")[1]
     TIME = str(time.time()).split(".")[0]
     MINOR_VERSION = OTA_VERSION[:15]
-    DATA = config.BODY
-    URL = config.GL_URL
+    MAJOR_VERSION = OTA_VERSION[13:]
     TIMEOUT = config.TIMEOUT
+        
+    if PRODUCT != OTA_VERSION[:7]:
+        PRODUCT = OTA_VERSION[:7]
     
+    if args.rui_version == "1":
+        URL = config.RUI1_ENDPS["GL_URL"]
+    elif args.rui_version == "2":
+        URL = config.RUI2_ENDPS["GL_URL"]
+
     if args.server == 1:
-        URL = config.CN_URL
-    if args.server == 2:
-        URL = config.IN_URL
-    if args.server == 3:
-        URL = config.EU_URL
+        if args.rui_version == "1":
+            URL = config.RUI1_ENDPS["CN_URL"]
+        elif args.rui_version == "1":
+            URL = config.RUI2_ENDPS["CN_URL"]
+    elif args.server == 2:
+        if args.rui_version == "1":
+            URL = config.RUI1_ENDPS["IN_URL"]
+        elif args.rui_version == "2":
+            URL = config.RUI2_ENDPS["IN_URL"]
+    elif args.server == 3:
+        if args.rui_version == "1":
+            URL = config.RUI1_ENDPS["EU_URL"]
+        elif args.rui_version == "2":
+            URL = config.RUI2_ENDPS["EU_URL"]  
+  
     if args.timeout:
         TIMEOUT = args.timeout
     
-    DATA['otaVersion'] = OTA_VERSION
-    DATA['imei'] = 000000000000000
-    DATA['productName'] = PRODUCT
-    DATA['romVersion'] = MINOR_VERSION
-    DATA['time'] = TIME
-    DATA['otaPrefix'] = MINOR_VERSION
+    if args.rui_version == "1":
+        HEADERS = config.RUI1_HEADERS
+        DATA = config.RUI1_DATA
+        
+        DATA['otaVersion'] = OTA_VERSION
+        DATA['productName'] = PRODUCT
+        DATA['romVersion'] = MINOR_VERSION
+        DATA['time'] = TIME
+        DATA['otaPrefix'] = MINOR_VERSION
 
-    if args.imei:
-        DATA['imei'] = args.imei
-    if args.android:
-        DATA['androidVersion'] = args.android
-    if args.root:
-        DATA['isRooted'] = args.root
+    elif args.rui_version == "2":
+        HEADERS = config.RUI2_HEADERS
+        DATA = config.RUI2_DATA
+                
+        DATA['model'] = PRODUCT
+        HEADERS['model'] = PRODUCT
+        HEADERS['otaVersion'] = OTA_VERSION 
 
     if not args.silent:
-        logger.log(f"Requesting for {PRODUCT} - {MINOR_VERSION}...")
+        logger.log(f"RealmeUI V{args.rui_version} {PRODUCT} ({PRODUCT_IDENTIFIER}) - {MAJOR_VERSION}")
 
-    try:
-        response = requests.post(URL, 
-            data = json.dumps(crypto.encReq(json.dumps(DATA))), headers = config.HEADERS, timeout = TIMEOUT)
-    except Exception as e:
-        die(f"This shouldn't happen. Something went wrong while requesting to the endpoint ({e})!", -1, 3)
+    if args.rui_version == "1":
+        try:
+            response = requests.post(URL, 
+                data = json.dumps({'params': crypto.encrypt_ecb(json.dumps(DATA))}), headers = HEADERS, timeout = TIMEOUT)
+        except Exception as e:
+            die(f"This shouldn't happen. Something went wrong while requesting to the endpoint ({e})!", -1, 3)
+        
+    elif args.rui_version == "2":
+        try:
+            response = requests.post(URL, json = {'params': crypto.encrypt_ctr(json.dumps(DATA)).decode("utf-8")}, headers = HEADERS, timeout = 30)
+        except Exception as e:
+            die(f"This shouldn't happen. Something went wrong while requesting to the endpoint ({e})!", -1, 3)
     
     if response.status_code != 200:
         die(f"Received invalid response: {response.status_code} :(!", -1, 2)
 
-    try:
-        content = crypto.decReq(json.loads(response.content)['resps'])
-    except Exception as e:
-        die(f"This shouldn't happen. Something went wrong while trying to decrypt the response ({e})!", -1, 3)
+    if args.rui_version == "1":
+        try:
+            content = json.loads(crypto.decrypt_ecb(json.loads(response.content)['resps']))
+        except Exception as e:
+            die(f"This shouldn't happen. Something went wrong while trying to decrypt the response ({e})!", -1, 3)
+        
+    elif args.rui_version == "2":
+        try:
+            content = json.loads(crypto.decrypt_ctr(json.loads(response.content)['body']))
+        except Exception as e:
+            die(f"This shouldn't happen. Something went wrong while trying to decrypt the response ({e})!", -1, 3)
         
     if args.only:
         try:
@@ -99,7 +133,7 @@ def main():
     if args.dump:
         try:
             with open(args.dump, "w") as fp:
-                json.dump(content, fp, sort_keys=True, indent=4)
+                json.dump(json.loads(content), fp, sort_keys=True, indent=4)
         except Exception as e:
             if not args.silent:
                 logger.log(f"Something went wrong while writing the response to {args.dump}!", 1)

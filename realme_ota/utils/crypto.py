@@ -1,32 +1,51 @@
-import base64
+import string
 import hashlib
-import json
+
+from base64 import b64decode, b64encode
+from random import randint, choices
 
 from Crypto.Cipher import AES
+from Crypto.Util import Counter
+from Crypto.Util.Padding import unpad, pad
 
-# Keys
-ENC_KEYS = ["09e32ji68RDaae6H", "404H8RDaae6HE8j"]
-DEC_KEYS = ["oppo1997", "baed2017", "java7865", "231uiedn", "09e32ji6",
-            "0oiu3jdy", "0pej387l", "2dkliuyt", "20odiuye", "87j3id7w"]
+keys = ["oppo1997", "baed2017", "java7865", "231uiedn", "09e32ji6", 
+        "0oiu3jdy", "0pej387l", "2dkliuyt", "20odiuye", "87j3id7w"]
 
-# Padding
-BLOCK_SIZE = 16
-PAD = lambda s: s + (BLOCK_SIZE - len(s) % BLOCK_SIZE) * chr(BLOCK_SIZE - len(s) % BLOCK_SIZE)
-UNPAD = lambda s: s[:-ord(s[len(s) - 1:])]
+def getKey(key):
+    return (keys[int(key[0])] + key[4:12]).encode('utf-8')
 
-def encKey(buf, key):
-    cipher = AES.new(key.encode(), AES.MODE_ECB)
-    return str(base64.encodebytes(cipher.encrypt(PAD(buf).encode())), encoding='utf-8')
-
-def decKey(buf, key):
-    cipher = AES.new(key.encode(), AES.MODE_ECB)
-    return UNPAD(cipher.decrypt(base64.b64decode(buf))).decode("utf-8")
-
-def getKey(tail):
-    return DEC_KEYS[int(tail[0])] + tail[4:12]
+def encrypt_ctr(buf):
+    key_pseudo = str(randint(0, 10)) + ''.join(choices(string.digits, k=14)) # Only numbers are allowed
+    key_real = getKey(key_pseudo)
     
-def encReq(data):
-    return {'params':(encKey(str(data), ENC_KEYS[0]) + ENC_KEYS[1]).replace("\n", "")}
+    ctr = Counter.new(128, initial_value=int.from_bytes(bytes.fromhex(hashlib.md5(key_real).hexdigest()), "big"))
+    cipher = AES.new(key_real, AES.MODE_CTR, counter=ctr)
+    
+    return b64encode(cipher.encrypt(buf.encode("utf-8"))) + key_pseudo.encode("utf-8")
+    
+def decrypt_ctr(buf):
+    data = b64decode(buf[:-15])
+    key_real = getKey(buf[-15:])
 
-def decReq(data):
-    return json.loads(decKey(data[:len(data) - 15], getKey(data[len(data) - 15:])))
+    ctr = Counter.new(128, initial_value=int.from_bytes(bytes.fromhex(hashlib.md5(key_real).hexdigest()), "big"))
+    cipher = AES.new(key_real, AES.MODE_CTR, counter=ctr)
+    
+    return cipher.decrypt(data).decode("utf-8")
+
+def encrypt_ecb(buf):
+    key_pseudo = str(randint(0, 10)) + ''.join(choices(string.ascii_letters + string.digits, k=14)) # Both numbers and chars are allowed
+    key_real = getKey(key_pseudo)
+
+    cipher = AES.new(key_real, AES.MODE_ECB)
+    encrypted = cipher.encrypt(pad(buf.encode('utf-8'), AES.block_size))
+    
+    return b64encode(encrypted).decode('utf-8') + key_pseudo
+
+def decrypt_ecb(buf):
+    data = b64decode(buf[:-15])
+    key = getKey(buf[-15:])
+
+    cipher = AES.new(key, AES.MODE_ECB)
+    plain = unpad(cipher.decrypt(data), AES.block_size)
+
+    return plain.decode('utf-8')
