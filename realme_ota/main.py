@@ -25,7 +25,7 @@ def main():
     parser = ArgumentParser()
     parser.add_argument("product_model", help="Product Model (ro.product.name).")
     parser.add_argument("ota_version", help="OTA Version (ro.build.version.ota).")
-    parser.add_argument("-c", "--server", type=int, default=0, help="Use specific server for the request (GL = 0, CN = 1).")
+    parser.add_argument("-c", "--server", type=int, default=0, help="Use specific server for the request (GL = 0, CN = 1, IN = 2, EU = 3).")
     parser.add_argument("-i", "--imei", type=int, help="Use custom IMEI for the request.")
     parser.add_argument("-t", "--timeout", type=int, help="Use custom timeout for the request.")
     parser.add_argument("-a", "--android", type=str, help="Use custom android version for the request.")
@@ -52,6 +52,10 @@ def main():
     
     if args.server == 1:
         URL = config.CN_URL
+    if args.server == 2:
+        URL = config.IN_URL
+    if args.server == 3:
+        URL = config.EU_URL
     if args.timeout:
         TIMEOUT = args.timeout
     
