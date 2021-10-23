@@ -133,15 +133,16 @@ def main():
     if args.dump:
         try:
             with open(args.dump, "w") as fp:
-                json.dump(json.loads(content), fp, sort_keys=True, indent=4)
+                json.dump(content, fp, sort_keys=True, indent=4)
         except Exception as e:
             if not args.silent:
-                logger.log(f"Something went wrong while writing the response to {args.dump}!", 1)
+                logger.log(f"Something went wrong while writing the response to {args.dump} {e}!", 1)
         else:
             if not args.silent:
                 logger.log(f"Successfully saved request as {args.dump}!")
 
-    logger.log(f"{content}")
+    if not args.dump:
+        print(f"{json.dumps(content, indent=4, sort_keys=True)}")
 
 if __name__ == '__main__':
     main()
