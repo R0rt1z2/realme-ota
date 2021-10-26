@@ -34,11 +34,7 @@ def main():
     parser.add_argument("-v", "--verbosity", type=int, choices=[0, 1], default=1, help="Increase or decrease verbosity.")
 
     args = parser.parse_args()
-
-    if args.verbosity == 0:
-        logger.init(0)        
-    else:
-        logger.init(1)
+    logger.init(args.verbosity)
         
     PRODUCT = args.product_model
     OTA_VERSION = args.ota_version
