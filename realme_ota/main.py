@@ -59,7 +59,7 @@ def main():
     if args.server == 1:
         if args.rui_version == 1:
             URL = config.RUI1_ENDPS["CN_URL"]
-        elif args.rui_version == 1:
+        elif args.rui_version == 2:
             URL = config.RUI2_ENDPS["CN_URL"]
     elif args.server == 2:
         if args.rui_version == 1:
