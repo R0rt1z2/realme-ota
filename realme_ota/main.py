@@ -108,7 +108,7 @@ def main():
     if response.status_code != 200:
         die(f"Received invalid response: {response.status_code} :(!", -1, 2)
 
-    if 'errMsg' in json.loads(response.content):
+    if 'errMsg' in json.loads(response.content) and json.loads(response.content)['errMsg'] != None:
         die(f"Request was invalid: {json.loads(response.content)['errMsg']} (invalid product name/version)!", -1, 2)
 
     if args.rui_version == 1:
