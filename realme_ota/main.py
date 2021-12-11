@@ -25,7 +25,7 @@ def main():
     parser = ArgumentParser()
     parser.add_argument("product_model", type=str, help="Product Model (ro.product.name).")
     parser.add_argument("ota_version", help="OTA Version (ro.build.version.ota).")
-    parser.add_argument("rui_version", type=int, choices=[1, 2], help="RealmeUI Version (ro.build.version.realmeui).")
+    parser.add_argument("rui_version", type=int, choices=[1, 2, 3], help="RealmeUI Version (ro.build.version.realmeui).")
     parser.add_argument("-c", "--server", type=int, default=0, help="Use specific server for the request (GL = 0, CN = 1, IN = 2, EU = 3).")
     parser.add_argument("-t", "--timeout", type=int, help="Use custom timeout for the request.")
     parser.add_argument("-d", "--dump", type=str, help="Save request response into file.")
@@ -51,6 +51,8 @@ def main():
         URL = config.RUI1_ENDPS["GL_URL"]
     elif args.rui_version == 2:
         URL = config.RUI2_ENDPS["GL_URL"]
+    elif args.rui_version == 3:
+        URL = config.RUI3_ENDPS["IN_URL"] # For RUI3 OTAs, default to IN server
 
     if args.server == 1:
         if args.rui_version == 1:
@@ -66,7 +68,7 @@ def main():
         if args.rui_version == 1:
             URL = config.RUI1_ENDPS["EU_URL"]
         elif args.rui_version == 2:
-            URL = config.RUI2_ENDPS["EU_URL"]  
+            URL = config.RUI2_ENDPS["EU_URL"]
   
     if args.timeout:
         TIMEOUT = args.timeout
@@ -89,6 +91,14 @@ def main():
         HEADERS['model'] = PRODUCT
         HEADERS['otaVersion'] = OTA_VERSION 
 
+    elif args.rui_version == 3:
+        HEADERS = config.RUI3_HEADERS
+        DATA = config.RUI3_DATA
+                
+        DATA['model'] = PRODUCT
+        HEADERS['model'] = PRODUCT
+        HEADERS['otaVersion'] = OTA_VERSION 
+
     if not args.silent:
         logger.log(f"RealmeUI V{args.rui_version} {PRODUCT} ({PRODUCT_IDENTIFIER}) - {MAJOR_VERSION}")
 
@@ -99,7 +109,7 @@ def main():
         except Exception as e:
             die(f"This shouldn't happen. Something went wrong while requesting to the endpoint ({e})!", -1, 3)
         
-    elif args.rui_version == 2:
+    elif args.rui_version == 2 or args.rui_version == 3:
         try:
             response = requests.post(URL, json = {'params': crypto.encrypt_ctr(json.dumps(DATA)).decode("utf-8")}, headers = HEADERS, timeout = 30)
         except Exception as e:
@@ -117,7 +127,7 @@ def main():
         except Exception as e:
             die(f"This shouldn't happen. Something went wrong while trying to decrypt the response ({e})!", -1, 3)
         
-    elif args.rui_version == 2:
+    elif args.rui_version == 2 or args.rui_version == 3:
         try:
             content = json.loads(crypto.decrypt_ctr(json.loads(response.content)['body']))
         except Exception as e:

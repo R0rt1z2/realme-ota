@@ -22,7 +22,7 @@ usage: main.py [-h] [-c SERVER] [-t TIMEOUT] [-d DUMP] [-o ONLY] [-s] [-v {0,1}]
 positional arguments:
   product_model         Product Model (ro.product.name).
   ota_version           OTA Version (ro.build.version.ota).
-  rui_version           RealmeUI Version (1, 2).
+  rui_version           RealmeUI Version (ro.build.version.realmeui) [1,2,3].
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -36,6 +36,12 @@ optional arguments:
   -v {0,1}, --verbosity {0,1}
                         Increase or decrease verbosity.
 ```
+
+## Compatibility
+The tool currently supports the following RealmeUI versions:
+* RUI1 (Android 10).
+* RUI2 (Android 11).
+* RUI3 (Android 12) [Only IN server].
 
 ## License
 * This tool is licensed under the GNU (v3) General Public License. See `LICENSE` for more details.

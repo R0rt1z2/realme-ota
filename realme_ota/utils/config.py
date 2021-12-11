@@ -12,6 +12,10 @@ RUI2_ENDPS = {
     'CN_URL' : 'https://component-ota-cn.coloros.com/update/v1'
 }
 
+RUI3_ENDPS = {
+    'IN_URL' : 'https://component-ota-in.allawnos.com/update/v2'
+}
+
 TIMEOUT = 30
 
 RUI1_HEADERS = {
@@ -25,6 +29,22 @@ RUI2_HEADERS = {
     'romVersion': 'V1.0.0',
     'androidVersion': 'Android 11.0',
     'colorOSVersion': 'ColorOS V11',
+    'infVersion': '1',
+    'operator': 'UNKNOWN',
+    'otaVersion': 'NULL',
+    'trackRegion': 'UNKNOWN',
+    'uRegion': 'UNKNOWN',
+    'model': 'NULL',
+    'nvCarrier': '00011011',
+    'imei': '000000000000000',
+    'mode': '1'
+}
+
+RUI3_HEADERS = {
+    'language': 'en',
+    'romVersion': 'V1.0.0',
+    'androidVersion': 'Android 12.0',
+    'colorOSVersion': 'ColorOS V12',
     'infVersion': '1',
     'operator': 'UNKNOWN',
     'otaVersion': 'NULL',
@@ -70,4 +90,16 @@ RUI2_DATA = {
     'deviceId': 'UNKNOWN',
     'model': 'UNKNOWN',
     'androidVersion': '11.0',
+}
+
+RUI3_DATA = {
+    'forbiddenUpdate': '0',
+    'isRooted': '1',
+    'type': '2',
+    'registrationId': 'UNKNOWN',
+    'securityPatch': 'UNKNOWN',
+    'securityPatchVendor': 'UNKNOWN',
+    'deviceId': 'UNKNOWN',
+    'model': 'UNKNOWN',
+    'androidVersion': '12.0',
 }
