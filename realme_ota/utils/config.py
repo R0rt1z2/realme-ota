@@ -13,7 +13,7 @@ RUI2_ENDPS = {
 }
 
 RUI3_ENDPS = {
-    'IN_URL' : 'https://component-ota-in.allawnos.com/update/v2'
+    'IN_URL' : 'https://component-ota-in.coloros.com/update/v2'
 }
 
 TIMEOUT = 30
