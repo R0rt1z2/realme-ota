@@ -9,7 +9,7 @@ RUI2_ENDPS = {
     'GL_URL' : 'https://component-ota-f.coloros.com/update/v1',
     'IN_URL' : 'https://component-ota-in.coloros.com/update/v1',
     'EU_URL' : 'https://component-ota-eu.coloros.com/update/v1',
-    'CN_URL' : 'https://component-ota-cn.coloros.com/update/v1'
+    'CN_URL' : 'https://component-ota.coloros.com/update/v1'
 }
 
 RUI3_ENDPS = {
