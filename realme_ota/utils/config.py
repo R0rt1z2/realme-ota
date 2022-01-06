@@ -35,7 +35,7 @@ RUI2_HEADERS = {
     'trackRegion': 'UNKNOWN',
     'uRegion': 'UNKNOWN',
     'model': 'NULL',
-    'nvCarrier': '00011011',
+    'nvCarrier': 'UNKNOWN',
     'imei': '000000000000000',
     'mode': '1'
 }
@@ -51,7 +51,7 @@ RUI3_HEADERS = {
     'trackRegion': 'UNKNOWN',
     'uRegion': 'UNKNOWN',
     'model': 'NULL',
-    'nvCarrier': '00011011',
+    'nvCarrier': 'UNKNOWN',
     'imei': '000000000000000',
     'mode': '1'
 }

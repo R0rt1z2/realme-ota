@@ -50,6 +50,7 @@ def main():
     STRATEGY_VERSION = random.randint(0, 8)
     LANGUAGE = 'en-IN'
     REGION = 'GL'
+    NVCARRIER = '00011011'
 
     if PRODUCT != OTA_VERSION[:7]:
         PRODUCT = OTA_VERSION[:7]
@@ -65,6 +66,7 @@ def main():
         REGISTRATION_ID = f'realme_CN_{REGISTRATION_ID}'
         LANGUAGE = 'zh-CN'
         REGION = 'CN'
+        NVCARRIER = '10010111'
         if args.rui_version == 1:
             URL = config.RUI1_ENDPS["CN_URL"]
         elif args.rui_version == 2:
@@ -113,6 +115,7 @@ def main():
         DATA['strategyVersion'] = STRATEGY_VERSION
         DATA['deviceId'] = DEVICE_ID
         DATA['model'] = PRODUCT
+        HEADERS['nvCarrier'] = NVCARRIER
         HEADERS['uRegion'], HEADERS['trackRegion'] = REGION
         HEADERS['language'] = LANGUAGE
         HEADERS['model'] = PRODUCT
@@ -127,6 +130,7 @@ def main():
         DATA['strategyVersion'] = STRATEGY_VERSION
         DATA['deviceId'] = DEVICE_ID
         DATA['model'] = PRODUCT
+        HEADERS['nvCarrier'] = NVCARRIER
         HEADERS['uRegion'], HEADERS['trackRegion'] = REGION
         HEADERS['language'] = LANGUAGE
         HEADERS['model'] = PRODUCT
