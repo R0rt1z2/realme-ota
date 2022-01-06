@@ -90,7 +90,7 @@ def main():
 
     if args.timeout:
         TIMEOUT = args.timeout
-    
+
     if args.rui_version == 1:
         HEADERS = config.RUI1_HEADERS
         DATA = config.RUI1_DATA
@@ -116,7 +116,8 @@ def main():
         HEADERS['uRegion'], HEADERS['trackRegion'] = REGION
         HEADERS['language'] = LANGUAGE
         HEADERS['model'] = PRODUCT
-        HEADERS['otaVersion'] = OTA_VERSION 
+        HEADERS['otaVersion'] = OTA_VERSION
+        HEADERS['romVersion'] = MINOR_VERSION
 
     elif args.rui_version == 3:
         HEADERS = config.RUI3_HEADERS
@@ -129,7 +130,8 @@ def main():
         HEADERS['uRegion'], HEADERS['trackRegion'] = REGION
         HEADERS['language'] = LANGUAGE
         HEADERS['model'] = PRODUCT
-        HEADERS['otaVersion'] = OTA_VERSION 
+        HEADERS['otaVersion'] = OTA_VERSION
+        HEADERS['romVersion'] = MINOR_VERSION
 
     if not args.silent:
         logger.log(f"RealmeUI V{args.rui_version} {PRODUCT} ({PRODUCT_IDENTIFIER}) - {MAJOR_VERSION}")
