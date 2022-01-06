@@ -4,6 +4,8 @@ import requests
 import time
 import sys
 import json
+import string
+import random
 
 from argparse import ArgumentParser
 
@@ -43,7 +45,10 @@ def main():
     MINOR_VERSION = OTA_VERSION[:15]
     MAJOR_VERSION = OTA_VERSION[13:]
     TIMEOUT = config.TIMEOUT
-        
+    DEVICE_ID = ''.join(random.choices(string.ascii_letters + string.digits, k=64))
+    REGISTRATION_ID = DEVICE_ID[0:30]
+    STRATEGY_VERSION = random.randint(0, 8)
+
     if PRODUCT != OTA_VERSION[:7]:
         PRODUCT = OTA_VERSION[:7]
     
@@ -55,20 +60,25 @@ def main():
         URL = config.RUI3_ENDPS["IN_URL"] # For RUI3 OTAs, default to IN server
 
     if args.server == 1:
+        REGISTRATION_ID = f'realme_CN_{REGISTRATION_ID}'
         if args.rui_version == 1:
             URL = config.RUI1_ENDPS["CN_URL"]
         elif args.rui_version == 2:
             URL = config.RUI2_ENDPS["CN_URL"]
     elif args.server == 2:
+        REGISTRATION_ID = f'realme_IN_{REGISTRATION_ID}'
         if args.rui_version == 1:
             URL = config.RUI1_ENDPS["IN_URL"]
         elif args.rui_version == 2:
             URL = config.RUI2_ENDPS["IN_URL"]
     elif args.server == 3:
+        REGISTRATION_ID = f'realme_EU_{REGISTRATION_ID}'
         if args.rui_version == 1:
             URL = config.RUI1_ENDPS["EU_URL"]
         elif args.rui_version == 2:
             URL = config.RUI2_ENDPS["EU_URL"]
+    else:
+        REGISTRATION_ID = f'realme_{REGISTRATION_ID}'
   
     if args.timeout:
         TIMEOUT = args.timeout
@@ -76,7 +86,9 @@ def main():
     if args.rui_version == 1:
         HEADERS = config.RUI1_HEADERS
         DATA = config.RUI1_DATA
-        
+
+        DATA['registrationId'] = REGISTRATION_ID
+        DATA['strategyVersion'] = STRATEGY_VERSION
         DATA['otaVersion'] = OTA_VERSION
         DATA['productName'] = PRODUCT
         DATA['romVersion'] = MINOR_VERSION
@@ -86,7 +98,10 @@ def main():
     elif args.rui_version == 2:
         HEADERS = config.RUI2_HEADERS
         DATA = config.RUI2_DATA
-                
+
+        DATA['registrationId'] = REGISTRATION_ID
+        DATA['strategyVersion'] = STRATEGY_VERSION
+        DATA['deviceId'] = DEVICE_ID
         DATA['model'] = PRODUCT
         HEADERS['model'] = PRODUCT
         HEADERS['otaVersion'] = OTA_VERSION 
@@ -94,7 +109,10 @@ def main():
     elif args.rui_version == 3:
         HEADERS = config.RUI3_HEADERS
         DATA = config.RUI3_DATA
-                
+
+        DATA['registrationId'] = REGISTRATION_ID
+        DATA['strategyVersion'] = STRATEGY_VERSION
+        DATA['deviceId'] = DEVICE_ID
         DATA['model'] = PRODUCT
         HEADERS['model'] = PRODUCT
         HEADERS['otaVersion'] = OTA_VERSION 
