@@ -48,6 +48,8 @@ def main():
     DEVICE_ID = ''.join(random.choices(string.ascii_letters + string.digits, k=64))
     REGISTRATION_ID = DEVICE_ID[0:30]
     STRATEGY_VERSION = random.randint(0, 8)
+    LANGUAGE = 'en-IN'
+    REGION = 'GL'
 
     if PRODUCT != OTA_VERSION[:7]:
         PRODUCT = OTA_VERSION[:7]
@@ -61,25 +63,31 @@ def main():
 
     if args.server == 1:
         REGISTRATION_ID = f'realme_CN_{REGISTRATION_ID}'
+        LANGUAGE = 'zh-CN'
+        REGION = 'CN'
         if args.rui_version == 1:
             URL = config.RUI1_ENDPS["CN_URL"]
         elif args.rui_version == 2:
             URL = config.RUI2_ENDPS["CN_URL"]
     elif args.server == 2:
         REGISTRATION_ID = f'realme_IN_{REGISTRATION_ID}'
+        LANGUAGE = 'en-IN'
+        REGION = 'IN'
         if args.rui_version == 1:
             URL = config.RUI1_ENDPS["IN_URL"]
         elif args.rui_version == 2:
             URL = config.RUI2_ENDPS["IN_URL"]
     elif args.server == 3:
         REGISTRATION_ID = f'realme_EU_{REGISTRATION_ID}'
+        LANGUAGE = 'en-EN'
+        REGION = 'EU'
         if args.rui_version == 1:
             URL = config.RUI1_ENDPS["EU_URL"]
         elif args.rui_version == 2:
             URL = config.RUI2_ENDPS["EU_URL"]
     else:
         REGISTRATION_ID = f'realme_{REGISTRATION_ID}'
-  
+
     if args.timeout:
         TIMEOUT = args.timeout
     
@@ -94,6 +102,8 @@ def main():
         DATA['romVersion'] = MINOR_VERSION
         DATA['time'] = TIME
         DATA['otaPrefix'] = MINOR_VERSION
+        DATA['uRegion'], DATA['trackRegion'] = REGION
+        DATA['language'] = LANGUAGE
 
     elif args.rui_version == 2:
         HEADERS = config.RUI2_HEADERS
@@ -103,6 +113,8 @@ def main():
         DATA['strategyVersion'] = STRATEGY_VERSION
         DATA['deviceId'] = DEVICE_ID
         DATA['model'] = PRODUCT
+        HEADERS['uRegion'], HEADERS['trackRegion'] = REGION
+        HEADERS['language'] = LANGUAGE
         HEADERS['model'] = PRODUCT
         HEADERS['otaVersion'] = OTA_VERSION 
 
@@ -114,6 +126,8 @@ def main():
         DATA['strategyVersion'] = STRATEGY_VERSION
         DATA['deviceId'] = DEVICE_ID
         DATA['model'] = PRODUCT
+        HEADERS['uRegion'], HEADERS['trackRegion'] = REGION
+        HEADERS['language'] = LANGUAGE
         HEADERS['model'] = PRODUCT
         HEADERS['otaVersion'] = OTA_VERSION 
 

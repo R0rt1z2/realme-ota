@@ -25,7 +25,7 @@ RUI1_HEADERS = {
 }
 
 RUI2_HEADERS = {
-    'language': 'en',
+    'language': 'UNKNOWN',
     'romVersion': 'V1.0.0',
     'androidVersion': 'Android 11.0',
     'colorOSVersion': 'ColorOS V11',
@@ -41,7 +41,7 @@ RUI2_HEADERS = {
 }
 
 RUI3_HEADERS = {
-    'language': 'en',
+    'language': 'UNKNOWN',
     'romVersion': 'V1.0.0',
     'androidVersion': 'Android 12.0',
     'colorOSVersion': 'ColorOS V12',
@@ -61,7 +61,7 @@ RUI1_DATA = {
     'otaVersion': 'NULL',
     'imei': 'NULL',
     'mode': '0',
-    'language': 'en',
+    'language': 'UNKNOWN',
     'productName': 'NULL',
     'type': '1',
     'romVersion': 'NULL',
