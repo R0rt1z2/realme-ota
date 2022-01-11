@@ -15,7 +15,7 @@ def getKey(key):
     return (keys[int(key[0])] + key[4:12]).encode('utf-8')
 
 def encrypt_ctr(buf):
-    key_pseudo = str(randint(0, 10)) + ''.join(choices(string.digits, k=14)) # Only numbers are allowed
+    key_pseudo = str(randint(0, 10)) + ''.join(choices(string.digits, k=14))
     key_real = getKey(key_pseudo)
     
     ctr = Counter.new(128, initial_value=int.from_bytes(bytes.fromhex(hashlib.md5(key_real).hexdigest()), "big"))
@@ -33,7 +33,7 @@ def decrypt_ctr(buf):
     return cipher.decrypt(data).decode("utf-8")
 
 def encrypt_ecb(buf):
-    key_pseudo = str(randint(0, 10)) + ''.join(choices(string.ascii_letters + string.digits, k=14)) # Both numbers and chars are allowed
+    key_pseudo = str(randint(0, 10)) + ''.join(choices(string.ascii_letters + string.digits, k=14))
     key_real = getKey(key_pseudo)
 
     cipher = AES.new(key_real, AES.MODE_ECB)
