@@ -12,7 +12,7 @@ CLI tool (based on this [C# program](https://github.com/4j17h/realmeOTAUpdates))
 ## Installation
 ```bash
 sudo apt install python3-pip
-pip3 install --upgrade pycryptodome git+https://github.com/R0rt1z2/realme-ota
+pip3 install --upgrade requests pycryptodome git+https://github.com/R0rt1z2/realme-ota
 ```
 
 ## Usage
