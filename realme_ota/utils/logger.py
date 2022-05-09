@@ -11,25 +11,13 @@ LOGGING_LEVELS = {
 }
 
 class Logger:
-    def __init__(self, silent = False, verbosity = 1):
-        self.silent, self.verbosity = silent, verbosity
+    def __init__(self, silent = 0):
+        self.silent = silent
 
     def log(self, buf, prio = 0):
-        line = buf
-
-        if self.verbosity > 0:
-            line = f"[{datetime.datetime.now()}] "
-        
-            if (prio := str(prio)) in LOGGING_LEVELS:
-                line += f"{LOGGING_LEVELS[prio]}: "
-            else:
-                line += "U: "
-        
-            line += f"{buf}"
-
         if not self.silent:
-            print(line)
-    
+            print(f"[{datetime.datetime.now()}] {LOGGING_LEVELS.get(prio, LOGGING_LEVELS[str(prio)])}: {buf}")
+
     def die(self, msg, ecl):
         self.log(f"{msg}", ecl)
         exit(ecl)

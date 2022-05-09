@@ -3,8 +3,6 @@
 ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/R0rt1z2/realme-ota?include_prereleases)
 ![GitHub Issues](https://img.shields.io/github/issues-raw/R0rt1z2/realme-ota?color=red)
 
-CLI tool (based on this [C# program](https://github.com/4j17h/realmeOTAUpdates)) to create requests to the Realme's endpoint.
-
 ## Requirements
 * Python 3.9.
 * pycryptodome.
@@ -17,17 +15,18 @@ pip3 install --upgrade requests pycryptodome git+https://github.com/R0rt1z2/real
 
 ## Usage
 ```bash
-usage: realme-ota [-h] [-r {0,1,2,3}] [-d DUMP] [-o ONLY] [-s {0,1}] [-v {0,1}] product_model ota_version {1,2,3}
+usage: main.py [-h] [-r {0,1,2,3}] [-d DUMP] [-o ONLY] [-s {0,1}] [-v {0,1}] product_model ota_version {1,2,3} nv_identifier
 
 positional arguments:
   product_model         Product Model (ro.product.name).
   ota_version           OTA Version (ro.build.version.ota).
   {1,2,3}               RealmeUI Version (ro.build.version.realmeui).
+  nv_identifier         NV (carrier) identifier (ro.build.oplus_nv_id) (if none, provide 0).
 
 optional arguments:
   -h, --help            show this help message and exit
   -r {0,1,2,3}, --region {0,1,2,3}
-                        Use custom region for the request (GL = 0, CN = 1, IN = 2, EU = 3).
+                        Use custom region for the request.
   -d DUMP, --dump DUMP  Save request response into a file.
   -o ONLY, --only ONLY  Only show the desired value from the response.
   -s {0,1}, --silent {0,1}
@@ -43,7 +42,9 @@ The tool currently supports the following RealmeUI versions:
 * Realme UI 3 (Android 12).
 
 ## Additional notes
-* When requesting a lot of times in a short period of time (specially to the Chinese endpoints) you may get rate limited (`flow limit`). If you face this problem, simply wait a few minutes before requesting again to the endpoint.
+* If your request returns `flow limit` or status code `500`, try to wait a few minutes and then request again.
+* If your request returns `artifactV1Result is empty`, try replacing the last 16 digits of `ota_version` with 0s and make sure to use a valid `nv_identifier`.
+* Since Android 11 (RUI2), Realme started using components, which means you won't be able to get a full OTA link.
 
 ## License
 * This tool is licensed under the GNU (v3) General Public License. See `LICENSE` for more details.

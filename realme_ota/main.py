@@ -21,22 +21,22 @@ def main():
     parser.add_argument("product_model", type=str, help="Product Model (ro.product.name).")
     parser.add_argument("ota_version", help="OTA Version (ro.build.version.ota).")
     parser.add_argument("rui_version", type=int, choices=[1, 2, 3], help="RealmeUI Version (ro.build.version.realmeui).")
-    parser.add_argument("-r", "--region", type=int, choices=[0, 1, 2, 3], default=0, help="Use custom region for the request (GL = 0, CN = 1, IN = 2, EU = 3).")
+    parser.add_argument("nv_identifier", type=str, help="NV (carrier) identifier (ro.build.oplus_nv_id) (if none, provide 0).")
+    parser.add_argument("-r", "--region", type=int, choices=[0, 1, 2, 3], default=0, help="Use custom region for the request.")
     parser.add_argument("-d", "--dump", type=str, help="Save request response into a file.")
     parser.add_argument("-o", "--only", type=str, help="Only show the desired value from the response.")
     parser.add_argument("-s", "--silent", type=bool, choices=[0, 1], default=0, help="Enable silent output (purge logging).")
-    parser.add_argument("-v", "--verbosity", type=int, choices=[0, 1], default=1, help="Increase or decrease logging verbosity.")
     args = parser.parse_args()
 
     logger = Logger(
         silent = args.silent,
-        verbosity = args.verbosity
     )
 
     request = Request(
         model = args.product_model,
         ota_version = args.ota_version,
         rui_version = args.rui_version,
+        nv_identifier = args.nv_identifier,
         region = args.region
     )
 
@@ -57,11 +57,8 @@ def main():
     except Exception as e:
         logger.die(f"Something went wrong while requesting to the endpoint :( {e}!", 3)
 
-    if response.status_code != 200:
-        logger.die(f"Received {response.status_code} instead of the expected response :(!", 2)
-
     try:
-        request.check_response(json.loads(response.content))
+        request.check_response(response)
     except Exception as e:
         logger.die(f'{e}', 3)
     else:
@@ -72,7 +69,7 @@ def main():
         content = json.loads(request.decrypt(json.loads(response.content)[request.resp_key]))
     except Exception as e:
         logger.die("Something went wrong while parsing the response :( {e}!", 2)
-        
+
     if args.only:
         try:
             content = content[args.only]
