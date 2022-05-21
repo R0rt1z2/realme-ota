@@ -15,7 +15,7 @@ pip3 install --upgrade requests pycryptodome git+https://github.com/R0rt1z2/real
 
 ## Usage
 ```bash
-usage: main.py [-h] [-r {0,1,2,3}] [-d DUMP] [-o ONLY] [-s {0,1}] [-v {0,1}] product_model ota_version {1,2,3} nv_identifier
+usage: realme-ota [-h] [-r {0,1,2,3}] [-d DUMP] [-o ONLY] [-s {0,1}] [-v {0,1}] product_model ota_version {1,2,3} nv_identifier
 
 positional arguments:
   product_model         Product Model (ro.product.name).
@@ -26,7 +26,7 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
   -r {0,1,2,3}, --region {0,1,2,3}
-                        Use custom region for the request.
+                        Use custom region for the request (GL = 0, CN = 1, IN = 2, EU = 3).
   -d DUMP, --dump DUMP  Save request response into a file.
   -o ONLY, --only ONLY  Only show the desired value from the response.
   -s {0,1}, --silent {0,1}
@@ -43,7 +43,7 @@ The tool currently supports the following RealmeUI versions:
 
 ## Additional notes
 * If your request returns `flow limit` or status code `500`, try to wait a few minutes and then request again.
-* If your request returns `artifactV1Result is empty`, try replacing the last 16 digits of `ota_version` with 0s and make sure to use a valid `nv_identifier`.
+* If your request returns `artifactV1Result is empty`, try replacing the last 16 digits of `ota_version` with 0s and make sure to use a valid `nv_identifier`. This is because the OTA fails in using the real version number, and tries using the one with 0s instead as fallback to fetch full updates.
 * Since Android 11 (RUI2), Realme started using components, which means you won't be able to get a full OTA link.
 
 ## License
