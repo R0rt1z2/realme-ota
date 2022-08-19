@@ -57,8 +57,10 @@ def main():
     except Exception as e:
         logger.die(f"Something went wrong while requesting to the endpoint :( {e}!", 3)
 
-    if response.status_code != 200:
-        logger.die(f"Response status mismatch, expected '200' got '{response.status_code}'!", 3)
+    try:
+        request.validate_response(response)
+    except Exception as e:
+        logger.die(f'{e}', 3)
     else:
         logger.log("All good")
 
