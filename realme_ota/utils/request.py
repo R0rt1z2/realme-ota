@@ -102,9 +102,6 @@ class Request:
 
         self.headers = data.default_headers
 
-    def check_response(self, response):
-        if response.status_code != 200:
-            raise RuntimeError(f"Response status mismatch, expected '200' got '{response.status_code}'!")
-
-        if 'errMsg' in json.loads(response.content) and json.loads(response.content)['errMsg'] != None:
-            raise RuntimeError(f"Response contents mismatch, expected '{self.resp_key}' got '{json.loads(response.content)['errMsg']}'!")
+    def validate_content(self, content):
+        if 'errMsg' in content and content['errMsg'] != None:
+            raise RuntimeError(f"Response contents mismatch, expected '{self.resp_key}' got '{content['errMsg']}'!")
