@@ -102,9 +102,13 @@ class Request:
 
         self.headers = data.default_headers
 
+    def validate_response(self, response):
+        if response.status_code != 200 or 'responseCode' in json.loads(response.content) and json.loads(response.content)['responseCode'] != 200:
+            if response.status_code != 200:
+                raise RuntimeError(f"Response status mismatch, expected '200' got '{response.status_code}'!")
+            else:
+                raise RuntimeError(f"Response status mismatch, expected '200' got '{json.loads(response.content)['responseCode']}' ({json.loads(response.content)['errMsg']})!")
+
     def validate_content(self, content):
         if 'checkFailReason' in content and content['checkFailReason'] != None:
             raise RuntimeError(f"Response contents mismatch, expected '{self.resp_key}' got '{content['checkFailReason']}'!")
-
-        if 'errMsg' in content and content['errMsg'] != None:
-            raise RuntimeError(f"Response contents mismatch, expected '{self.resp_key}' got '{content['errMsg']}'!")
