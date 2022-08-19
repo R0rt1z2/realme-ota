@@ -1,7 +1,9 @@
 #!/usr/bin/python3
 
-import requests
+import os
+import sys
 import json
+import requests
 
 from argparse import ArgumentParser
 
@@ -60,6 +62,9 @@ def main():
     try:
         request.validate_response(response)
     except Exception as e:
+        if args.ota_version[-17:] != '0000_000000000000':
+            sys.argv[sys.argv.index(args.ota_version)] = args.ota_version[:-17] + '0000_000000000000'
+            os.execl(sys.executable, sys.executable, *sys.argv)
         logger.die(f'{e}', 3)
     else:
         logger.log("All good")
