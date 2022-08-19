@@ -57,10 +57,8 @@ def main():
     except Exception as e:
         logger.die(f"Something went wrong while requesting to the endpoint :( {e}!", 3)
 
-    try:
-        request.check_response(response)
-    except Exception as e:
-        logger.die(f'{e}', 3)
+    if response.status_code != 200:
+        logger.die(f"Response status mismatch, expected '200' got '{response.status_code}'!", 3)
     else:
         logger.log("All good")
 
@@ -69,6 +67,13 @@ def main():
         content = json.loads(request.decrypt(json.loads(response.content)[request.resp_key]))
     except Exception as e:
         logger.die("Something went wrong while parsing the response :( {e}!", 2)
+
+    try:
+        request.validate_content(content)
+    except Exception as e:
+        logger.die(f'{e}', 3)
+    else:
+        logger.log("Party time")
 
     if args.only:
         try:
