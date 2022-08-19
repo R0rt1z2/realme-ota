@@ -66,7 +66,7 @@ def main():
     try:
         content = json.loads(request.decrypt(json.loads(response.content)[request.resp_key]))
     except Exception as e:
-        logger.die("Something went wrong while parsing the response :( {e}!", 2)
+        logger.die(f"Something went wrong while parsing the response :( {e}!", 2)
 
     try:
         request.validate_content(content)
