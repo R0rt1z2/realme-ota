@@ -103,5 +103,8 @@ class Request:
         self.headers = data.default_headers
 
     def validate_content(self, content):
+        if 'checkFailReason' in content and content['checkFailReason'] != None:
+            raise RuntimeError(f"Response contents mismatch, expected '{self.resp_key}' got '{content['checkFailReason']}'!")
+
         if 'errMsg' in content and content['errMsg'] != None:
             raise RuntimeError(f"Response contents mismatch, expected '{self.resp_key}' got '{content['errMsg']}'!")
