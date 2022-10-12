@@ -3,7 +3,7 @@
 from distutils.core import setup
 
 setup(name='realme-ota',
-      version='3.0',
+      version='4.0',
       description="CLI tool to receive requests from Realme's OTA endpoint.",
       author='Roger Ortiz',
       author_email='',
