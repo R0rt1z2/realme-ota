@@ -58,5 +58,11 @@ urls = {
         1 : 'https://component-ota.coloros.com/update/v2',         # CN
         2 : 'https://component-ota-in.coloros.com/update/v2',      # IN
         3 : 'https://component-ota-eu.coloros.com/update/v2'       # EU
+    },
+    4 : {
+        0 : 'https://component-ota-f.coloros.com/update/v2',       # GL
+        1 : 'https://component-ota.coloros.com/update/v2',         # CN
+        2 : 'https://component-ota-in.coloros.com/update/v2',      # IN
+        3 : 'https://component-ota-eu.coloros.com/update/v2'       # EU
     }
 }

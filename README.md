@@ -20,7 +20,7 @@ usage: realme-ota [-h] [-r {0,1,2,3}] [-d DUMP] [-o ONLY] [-s {0,1}] [-v {0,1}] 
 positional arguments:
   product_model         Product Model (ro.product.name).
   ota_version           OTA Version (ro.build.version.ota).
-  {1,2,3}               RealmeUI Version (ro.build.version.realmeui).
+  {1,2,3,4}               RealmeUI Version (ro.build.version.realmeui).
   nv_identifier         NV (carrier) identifier (ro.build.oplus_nv_id) (if none, provide 0).
 
 optional arguments:
