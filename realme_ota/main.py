@@ -28,18 +28,23 @@ def main():
     parser.add_argument("-d", "--dump", type=str, help="Save request response into a file.")
     parser.add_argument("-o", "--only", type=str, help="Only show the desired value from the response.")
     parser.add_argument("-s", "--silent", type=bool, choices=[0, 1], default=0, help="Enable silent output (purge logging).")
+    parser.add_argument("-g", "--guid", type=str, default="0", help="The guid of the third line in the file /data/system/openid_config.xml (only required to extract 'CBT' in China).")
     args = parser.parse_args()
 
     logger = Logger(
         silent = args.silent,
     )
 
+    if not args.guid:
+        args.guid = "0"
+
     request = Request(
         model = args.product_model,
         ota_version = args.ota_version,
         rui_version = args.rui_version,
         nv_identifier = args.nv_identifier,
-        region = args.region
+        region = args.region,
+        deviceId = crypto.sha256(args.guid)
     )
 
     logger.log(f"Load payload for {args.product_model} (RealmeUI V{args.rui_version})")
