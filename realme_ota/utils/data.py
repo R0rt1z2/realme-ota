@@ -1,4 +1,5 @@
 default_headers = {
+    'deviceId'       : '0',          # N/A
     'language'       : 'en-EN',            # lang-LANG
     'romVersion'     : 'unknown',          # ro.build.version.ota
     'otaVersion'     : 'unknown',          # ro.build.version.ota
@@ -18,6 +19,7 @@ default_headers = {
 }
 
 default_body = {
+    'deviceId'       : '0',          # N/A
     'language'       : 'en-EN',            # lang-LANG
     'romVersion'     : 'unknown',          # ro.build.version.ota
     'otaVersion'     : 'unknown',          # ro.build.version.ota
@@ -31,7 +33,6 @@ default_body = {
     'imei'           : '000000000000000',  # IMEI
     'mode'           : '0',                # N/A
     'registrationId' : 'unknown',          # N/A
-    'deviceId'       : 'unknown',          # N/A
     'version'        : '3',                # N/A
     'type'           : '1',                # N/A
     'otaPrefix'      : 'unknown',          # ro.build.version.ota

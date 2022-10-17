@@ -49,3 +49,6 @@ def decrypt_ecb(buf):
     plain = unpad(cipher.decrypt(data), AES.block_size)
 
     return plain.decode('utf-8')
+
+def sha256(data):
+    return hashlib.sha256(data.encode('utf-8')).hexdigest().upper()
