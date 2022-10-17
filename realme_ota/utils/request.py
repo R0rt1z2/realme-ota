@@ -8,13 +8,14 @@ except ImportError:
     from realme_ota.utils import crypto
 
 class Request:
-    def __init__(self, model, ota_version, nv_identifier, rui_version, region):
+    def __init__(self, model, ota_version, nv_identifier, rui_version, region, deviceId):
         self.model = model
         self.productName = model
         self.nvId = nv_identifier
         self.otaVersion = ota_version
         self.rui_version = rui_version
         self.region = region
+        self.deviceId = deviceId
         self.body = None
         self.headers = None
         self.url = None
@@ -96,7 +97,10 @@ class Request:
     def set_hdrs(self):
         for entry in list(data.default_headers.keys()):
             try:
-                exec(f"data.default_headers[\"{entry}\"] = self.{entry}")
+                if entry == "deviceId":
+                    exec(f"data.default_headers[\"{entry}\"] = crypto.sha256(self.{entry})")
+                else:
+                    exec(f"data.default_headers[\"{entry}\"] = self.{entry}")
             except Exception:
                 pass
 

@@ -11,6 +11,7 @@ default_headers = {
     'uRegion'        : 'unknown',          # persist.sys.oppo.region (RUI1)
     'trackRegion'    : 'unknown',          # ro.oppo.regionmark (RUI1)
     'imei'           : '000000000000000',  # IMEI
+    'deviceId'       : '0',                # N/A
     'mode'           : '0',                # N/A
     'Accept'         : 'application/json', # N/A
     'Content-Type'   : 'application/json', # N/A
@@ -31,7 +32,7 @@ default_body = {
     'imei'           : '000000000000000',  # IMEI
     'mode'           : '0',                # N/A
     'registrationId' : 'unknown',          # N/A
-    'deviceId'       : 'unknown',          # N/A
+    'deviceId'       : '0',                # N/A
     'version'        : '3',                # N/A
     'type'           : '1',                # N/A
     'otaPrefix'      : 'unknown',          # ro.build.version.ota
