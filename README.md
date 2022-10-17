@@ -15,13 +15,14 @@ pip3 install --upgrade requests pycryptodome git+https://github.com/R0rt1z2/real
 
 ## Usage
 ```bash
-usage: realme-ota [-h] [-r {0,1,2,3}] [-d DUMP] [-o ONLY] [-s {0,1}] [-v {0,1}] product_model ota_version {1,2,3} nv_identifier
+usage: realme-ota [-h] [-r {0,1,2,3}] [-d DUMP] [-o ONLY] [-s {0,1}] [-v {0,1}] product_model ota_version {1,2,3} nv_identifier deviceid
 
 positional arguments:
   product_model         Product Model (ro.product.name).
   ota_version           OTA Version (ro.build.version.ota).
   {1,2,3,4}               RealmeUI Version (ro.build.version.realmeui).
   nv_identifier         NV (carrier) identifier (ro.build.oplus_nv_id) (if none, provide 0).
+  deviceid              The guid on the third line in the file /data/system/openid_config.xml that for extracting CBT in China, if you don't need, provide 0
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -40,6 +41,7 @@ The tool currently supports the following RealmeUI versions:
 * Realme UI 1 (Android 10).
 * Realme UI 2 (Android 11).
 * Realme UI 3 (Android 12).
+* Realme UI 4 (Android 13).
 
 ## Additional notes
 * If your request returns `flow limit` or status code `500`, try to wait a few minutes and then request again.
