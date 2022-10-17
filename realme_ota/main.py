@@ -24,6 +24,7 @@ def main():
     parser.add_argument("ota_version", help="OTA Version (ro.build.version.ota).")
     parser.add_argument("rui_version", type=int, choices=[1, 2, 3, 4], help="RealmeUI Version (ro.build.version.realmeui).")
     parser.add_argument("nv_identifier", type=str, help="NV (carrier) identifier (ro.build.oplus_nv_id) (if none, provide 0).")
+    parser.add_argument("deviceId", type=str, default="0", help="deviceid with not sha256")
     parser.add_argument("-r", "--region", type=int, choices=[0, 1, 2, 3], default=0, help="Use custom region for the request (GL = 0, CN = 1, IN = 2, EU = 3).")
     parser.add_argument("-d", "--dump", type=str, help="Save request response into a file.")
     parser.add_argument("-o", "--only", type=str, help="Only show the desired value from the response.")
@@ -39,6 +40,7 @@ def main():
         ota_version = args.ota_version,
         rui_version = args.rui_version,
         nv_identifier = args.nv_identifier,
+        deviceId = args.deviceId,
         region = args.region
     )
 
