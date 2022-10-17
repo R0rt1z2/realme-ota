@@ -97,7 +97,10 @@ class Request:
     def set_hdrs(self):
         for entry in list(data.default_headers.keys()):
             try:
-                exec(f"data.default_headers[\"{entry}\"] = self.{entry}")
+                if entry == "deviceId":
+                    exec(f"data.default_headers[\"{entry}\"] = crypto.sha256(self.{entry})")
+                else:
+                    exec(f"data.default_headers[\"{entry}\"] = self.{entry}")
             except Exception:
                 pass
 
