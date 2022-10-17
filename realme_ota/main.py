@@ -44,7 +44,7 @@ def main():
         rui_version = args.rui_version,
         nv_identifier = args.nv_identifier,
         region = args.region,
-        deviceId = crypto.sha256(args.guid)
+        deviceId = args.guid
     )
 
     logger.log(f"Load payload for {args.product_model} (RealmeUI V{args.rui_version})")
