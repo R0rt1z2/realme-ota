@@ -1,22 +1,21 @@
 import datetime
 
 LOGGING_LEVELS = {
-    "-1":"U", # Unknown (Default)
-    "0":"I",  # Info
-    "1":"W",  # Warning
-    "2":"E",  # Error
-    "3":"F",  # Fatal Error
-    "4":"D",  # Debug
-    "5":"V",  # Verbose
+    0:  "U",    # Unknown (Default)
+    1:  "F",    # Fatal Error
+    2:  "E",    # Error
+    3:  "W",    # Warning
+    4:  "I",    # Info
+    5:  "D",    # Debug
 }
 
 class Logger:
-    def __init__(self, silent = 0):
-        self.silent = silent
+    def __init__(self, level):
+        self.level = level if level in range(0, 6) else 4
 
-    def log(self, buf, prio = 0):
-        if not self.silent:
-            print(f"[{datetime.datetime.now()}] {LOGGING_LEVELS.get(prio, LOGGING_LEVELS[str(prio)])}: {buf}")
+    def log(self, buf, prio = 4):
+        if prio <= self.level:
+            print(f"[{datetime.datetime.now()}] {LOGGING_LEVELS.get(prio, LOGGING_LEVELS[0])}: {buf}")
 
     def die(self, msg, ecl):
         self.log(f"{msg}", ecl)
