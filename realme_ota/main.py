@@ -33,6 +33,8 @@ def main():
     req_opts = parser.add_argument_group("request options")
     req_opts.add_argument("-r", "--region", type=int, choices=[0, 1, 2, 3], default=0, help="Use custom region for the request (GL = 0, CN = 1, IN = 2, EU = 3).")
     req_opts.add_argument("-g", "--guid", type=str, default="0", help="The guid of the third line in the file /data/system/openid_config.xml (only required to extract 'CBT' in China).")
+    req_opts.add_argument("-i", "--imei", type=str, nargs='+', help="Specify one or two IMEIs for the request.")
+    req_opts.add_argument("-b", "--beta", action='store_true', help="Try to get a test version (IMEI probably required).")
     # Output settings
     out_opts = parser.add_argument_group("output options")
     out_opts.add_argument("-d", "--dump", type=str, help="Save request response into a file.")
@@ -50,7 +52,10 @@ def main():
         rui_version = args.rui_version,
         nv_identifier = args.nv_identifier,
         region = args.region,
-        deviceId = args.guid
+        deviceId = args.guid,
+        imei0 = args.imei[0] if args.imei and len(args.imei) > 0 else None,
+        imei1 = args.imei[1] if args.imei and len(args.imei) > 1 else None,
+        beta = args.beta
     )
 
     logger.log(f"Load payload for {args.product_model} (RealmeUI V{args.rui_version})")

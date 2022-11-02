@@ -8,7 +8,7 @@ except ImportError:
     from realme_ota.utils import crypto
 
 class Request:
-    def __init__(self, model=None, ota_version=None, nv_identifier=None, rui_version=None, region=None, deviceId=None):
+    def __init__(self, model=None, ota_version=None, nv_identifier=None, rui_version=None, region=None, deviceId=None, imei0=None, imei1=None, beta=False):
         self.properties = {
             'model': model,
             'productName': model,
@@ -16,8 +16,12 @@ class Request:
             'otaVersion': ota_version,
             'rui_version': rui_version,
             'region': region,
-            'deviceId': deviceId
+            'deviceId': deviceId,
+            'imei': imei0,
+            'imei1': imei1
         }
+        if beta:
+            self.properties['mode'] = '1'
         self.body = None
         self.headers = dict()
         self.url = None
