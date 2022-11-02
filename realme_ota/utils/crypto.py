@@ -18,16 +18,17 @@ def encrypt_ctr(buf):
     key_pseudo = str(randint(0, 10)) + ''.join(choices(string.digits, k=14))
     key_real = getKey(key_pseudo)
 
-    ctr = Counter.new(128, initial_value=int.from_bytes(bytes.fromhex(hashlib.md5(key_real).hexdigest()), "big"))
+    ctr = Counter.new(128, initial_value=int.from_bytes(hashlib.md5(key_real).digest(), "big"))
     cipher = AES.new(key_real, AES.MODE_CTR, counter=ctr)
+    encrypted = cipher.encrypt(buf.encode("utf-8"))
 
-    return b64encode(cipher.encrypt(buf.encode("utf-8"))) + key_pseudo.encode("utf-8")
+    return b64encode(encrypted).decode('utf-8') + key_pseudo
 
 def decrypt_ctr(buf):
     data = b64decode(buf[:-15])
     key_real = getKey(buf[-15:])
 
-    ctr = Counter.new(128, initial_value=int.from_bytes(bytes.fromhex(hashlib.md5(key_real).hexdigest()), "big"))
+    ctr = Counter.new(128, initial_value=int.from_bytes(hashlib.md5(key_real).digest(), "big"))
     cipher = AES.new(key_real, AES.MODE_CTR, counter=ctr)
 
     return cipher.decrypt(data).decode("utf-8")

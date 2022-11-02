@@ -20,23 +20,29 @@ except ImportError:
 
 def main():
     parser = ArgumentParser()
+    # Verbosity
+    verbosity = parser.add_mutually_exclusive_group()
+    verbosity.add_argument("-v", "--verbosity", type=int, choices=range(0, 6), default=4, help="Set the verbosity level. Range: 0 (no logging) to 5 (debug). Default: 4 (info).")
+    verbosity.add_argument("-s", "--silent", action='store_true', help="Enable silent output (purge logging). Shortcut for '-v0'.")
+    # Positional arguments
     parser.add_argument("product_model", type=str, help="Product Model (ro.product.name).")
     parser.add_argument("ota_version", help="OTA Version (ro.build.version.ota).")
     parser.add_argument("rui_version", type=int, choices=[1, 2, 3, 4], help="RealmeUI Version (ro.build.version.realmeui).")
-    parser.add_argument("nv_identifier", type=str, help="NV (carrier) identifier (ro.build.oplus_nv_id) (if none, provide 0).")
-    parser.add_argument("-r", "--region", type=int, choices=[0, 1, 2, 3], default=0, help="Use custom region for the request (GL = 0, CN = 1, IN = 2, EU = 3).")
-    parser.add_argument("-d", "--dump", type=str, help="Save request response into a file.")
-    parser.add_argument("-o", "--only", type=str, help="Only show the desired value from the response.")
-    parser.add_argument("-s", "--silent", type=bool, choices=[0, 1], default=0, help="Enable silent output (purge logging).")
-    parser.add_argument("-g", "--guid", type=str, default="0", help="The guid of the third line in the file /data/system/openid_config.xml (only required to extract 'CBT' in China).")
+    parser.add_argument("nv_identifier", type=str, nargs='?', help="NV (carrier) identifier (ro.build.oplus_nv_id) (if none, provide 0 or omit).")
+    # Request attributes
+    req_opts = parser.add_argument_group("request options")
+    req_opts.add_argument("-r", "--region", type=int, choices=[0, 1, 2, 3], default=0, help="Use custom region for the request (GL = 0, CN = 1, IN = 2, EU = 3).")
+    req_opts.add_argument("-g", "--guid", type=str, default="0", help="The guid of the third line in the file /data/system/openid_config.xml (only required to extract 'CBT' in China).")
+    # Output settings
+    out_opts = parser.add_argument_group("output options")
+    out_opts.add_argument("-d", "--dump", type=str, help="Save request response into a file.")
+    out_opts.add_argument("-o", "--only", type=str, help="Only show the desired value from the response.")
+    
     args = parser.parse_args()
 
     logger = Logger(
-        silent = args.silent,
+        level = 0 if args.silent else args.verbosity
     )
-
-    if not args.guid:
-        args.guid = "0"
 
     request = Request(
         model = args.product_model,
@@ -50,19 +56,19 @@ def main():
     logger.log(f"Load payload for {args.product_model} (RealmeUI V{args.rui_version})")
     try:
         request.set_vars()
-        request.set_hdrs()
-        request.set_body()
+        req_hdrs = request.set_hdrs()
+        req_body = request.set_body()
     except Exception as e:
         logger.die(f"Something went wrong while setting the request variables :( ({e})!", 2)
-
+    
+    logger.log(f"Request headers:\n{json.dumps(req_hdrs, indent=4, sort_keys=True)}", 5)
+    logger.log(f"Request body:\n{json.dumps(req_body, indent=4, sort_keys=True)}", 5)
+    
     logger.log("Wait for the endpoint to reply")
     try:
-        if args.rui_version == 1:
-            response = requests.post(data.urls[args.rui_version][args.region], data = request.body, headers = request.headers, timeout = 30)
-        else:
-            response = requests.post(data.urls[args.rui_version][args.region], json = request.body, headers = request.headers, timeout = 30)
+        response = requests.post(data.urls[args.rui_version][args.region], data = request.body, headers = request.headers, timeout = 30)
     except Exception as e:
-        logger.die(f"Something went wrong while requesting to the endpoint :( {e}!", 3)
+        logger.die(f"Something went wrong while requesting to the endpoint :( {e}!", 1)
 
     try:
         request.validate_response(response)
@@ -70,7 +76,7 @@ def main():
         if args.ota_version[-17:] != '0000_000000000000':
             sys.argv[sys.argv.index(args.ota_version)] = args.ota_version[:-17] + '0000_000000000000'
             os.execl(sys.executable, sys.executable, *sys.argv)
-        logger.die(f'{e}', 3)
+        logger.die(f'{e}', 1)
     else:
         logger.log("All good")
 
@@ -83,7 +89,7 @@ def main():
     try:
         request.validate_content(content)
     except Exception as e:
-        logger.die(f'{e}', 3)
+        logger.die(f'{e}', 1)
     else:
         logger.log("Party time")
 
@@ -98,11 +104,10 @@ def main():
             with open(args.dump, "w") as fp:
                 json.dump(content, fp, sort_keys=True, indent=4)
         except Exception as e:
-            logger.die(f"Something went wrong while writing the response to {args.dump} {e}!", 3)
+            logger.die(f"Something went wrong while writing the response to {args.dump} {e}!", 1)
         else:
             logger.log(f"Successfully saved request as {args.dump}!")
-
-    if not args.dump:
+    else:
         print(f"{json.dumps(content, indent=4, sort_keys=True)}")
 
 if __name__ == '__main__':
