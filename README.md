@@ -4,13 +4,12 @@
 ![GitHub Issues](https://img.shields.io/github/issues-raw/R0rt1z2/realme-ota?color=red)
 
 ## Requirements
-* Python 3.9.
-* pycryptodome.
+* Python 3.9 (or newer).
 
 ## Installation
 ```bash
 sudo apt install python3-pip
-pip3 install --upgrade requests pycryptodome git+https://github.com/R0rt1z2/realme-ota
+pip3 install --upgrade git+https://github.com/R0rt1z2/realme-ota
 ```
 
 ## Usage
