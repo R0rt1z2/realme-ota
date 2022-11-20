@@ -7,6 +7,14 @@
 * Python 3.9 (or newer).
 
 ## Installation
+### Windows
+For convenience, a script has been provided to take care of installing all the requirements and the tool automatically (this has only been tested under Windows 10 and 11 using [Windows Terminal](https://github.com/microsoft/terminal)).
+```powershell
+# (Requires privilegies)
+Invoke-WebRequest https://cdn.r0rt1z2.com/realme-ota/Install.ps1 | Invoke-Expression
+```
+
+### Linux
 ```bash
 sudo apt install python3-pip
 pip3 install --upgrade git+https://github.com/R0rt1z2/realme-ota
