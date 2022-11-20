@@ -22,6 +22,8 @@ class Request:
         }
         if beta:
             self.properties['mode'] = '1'
+        if rui_version == 1:
+            self.properties['version'] = '2'
         self.body = None
         self.headers = dict()
         self.url = None
