@@ -26,7 +26,8 @@ class Request:
             self.properties['version'] = '2'
         self.body = None
         self.headers = dict()
-        self.url = None
+
+        self.url = data.urls[int(rui_version)][int(region)]
 
     def encrypt(self, buf):
         return (crypto.encrypt_ecb(buf) if self.properties.get('rui_version') <= 1 \
@@ -91,6 +92,13 @@ class Request:
             self.properties['otaPrefix'] = '_'.join(self.properties.get('otaVersion').split('_')[:2])
 
         self.resp_key = 'resps' if rui_version == 1 else 'body'
+
+        #
+        # OnePlus uses the same server no matter what the Android Version is.
+        # I'm not sure if they have more endpoints so hardcode the known URL.
+        #
+        if self.properties['productName'] in ['OnePlus', 'oneplus', 'Oneplus']:
+            self.url = 'https://otag.h2os.com/post/Query_Update'
 
     def set_body(self):
         new_body = dict()
