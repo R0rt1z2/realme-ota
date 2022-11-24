@@ -71,7 +71,7 @@ def main():
     
     logger.log("Wait for the endpoint to reply")
     try:
-        response = requests.post(data.urls[args.rui_version][args.region], data = request.body, headers = request.headers, timeout = 30)
+        response = requests.post(request.url, data = request.body, headers = request.headers, timeout = 30)
     except Exception as e:
         logger.die(f"Something went wrong while requesting to the endpoint :( {e}!", 1)
 
