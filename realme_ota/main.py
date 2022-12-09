@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 #
 # This file is part of realme-ota (https://github.com/R0rt1z2/realme-ota).
 # Copyright (c) 2022 Roger Ortiz.
@@ -14,7 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
-#!/usr/bin/python3
 
 import os
 import sys
