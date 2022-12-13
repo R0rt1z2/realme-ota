@@ -82,8 +82,8 @@ def main():
     except Exception as e:
         logger.die(f"Something went wrong while setting the request variables :( ({e})!", 2)
     
-    logger.log(f"Request headers:\n{json.dumps(req_hdrs, indent=4, sort_keys=True)}", 5)
-    logger.log(f"Request body:\n{json.dumps(req_body, indent=4, sort_keys=True)}", 5)
+    logger.log(f"Request headers:\n{json.dumps(req_hdrs, indent=4, sort_keys=True, ensure_ascii=False)}", 5)
+    logger.log(f"Request body:\n{json.dumps(req_body, indent=4, sort_keys=True, ensure_ascii=False)}", 5)
     
     logger.log("Wait for the endpoint to reply")
     try:
@@ -123,13 +123,13 @@ def main():
     if args.dump:
         try:
             with open(args.dump, "w") as fp:
-                json.dump(content, fp, sort_keys=True, indent=4)
+                json.dump(content, fp, sort_keys=True, indent=4, ensure_ascii=False)
         except Exception as e:
             logger.die(f"Something went wrong while writing the response to {args.dump} {e}!", 1)
         else:
             logger.log(f"Successfully saved request as {args.dump}!")
     else:
-        print(f"{json.dumps(content, indent=4, sort_keys=True)}")
+        print(f"{json.dumps(content, indent=4, sort_keys=True, ensure_ascii=False)}")
 
 if __name__ == '__main__':
     main()
