@@ -25,7 +25,7 @@ The release is compatible with the main branch.
 Required [Windows Terminal](https://github.com/microsoft/terminal) or [PowerShell](https://github.com/PowerShell/PowerShell).
 ```powershell
 # (Requires privileges - start Terminal/PowerShell as administrator)
-Invoke-WebRequest https://github.com/wjdob/realme-ota/blob/master/Install.ps1 | Invoke-Expression
+Invoke-WebRequest https://raw.githubusercontent.com/wjdob/realme-ota/master/Install.ps1 -OutFile .\Install.ps1; .\Install.ps1
 ```
 
 ### Linux
