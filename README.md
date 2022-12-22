@@ -1,23 +1,37 @@
 # Realme OTA Downloader
-![License](https://img.shields.io/github/license/R0rt1z2/realme-ota)
-![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/R0rt1z2/realme-ota?include_prereleases)
-![GitHub Issues](https://img.shields.io/github/issues-raw/R0rt1z2/realme-ota?color=red)
+![License](https://img.shields.io/github/license/wjdob/realme-ota)
+![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/wjdob/realme-ota?include_prereleases)
+![GitHub Issues](https://img.shields.io/github/issues-raw/wjdob/realme-ota?color=red)
 
 ## Requirements
 * Python 3.9 (or newer).
 
+## Notes
+This fork corrects PowerShell installation script by adding features of:
+* Automatic cleanup of obsolete/mislocated .bat wrapper.
+* Automatic cleanup of PATH.
+* Fixed adding realme-ota to PATH, previously Add-Path function was not called resulting in installation failure.
+* Fixed handling of Python/Pip locations - previously the script assumed Python is installed in Program Files.
+* Added dependencies install for Requests and Pycryptodome Python modules.
+* Added hotfix for Lib\site-packages\crypto -> Lib\site-packages\Crypto folder naming.
+* Added .bat wrapper as part of package and automatic adjustment of "cd" command.
+
+The release is compatible with the main branch.
+
 ## Installation
+
 ### Windows
-For convenience, a script has been provided to take care of installing all the requirements and the tool automatically (this has only been tested under Windows 10 and 11 using [Windows Terminal](https://github.com/microsoft/terminal)).
+
+Required [Windows Terminal](https://github.com/microsoft/terminal) or [PowerShell](https://github.com/PowerShell/PowerShell).
 ```powershell
-# (Requires privilegies)
-Invoke-WebRequest https://cdn.r0rt1z2.com/realme-ota/Install.ps1 | Invoke-Expression
+# (Requires privileges - start Terminal/PowerShell as administrator)
+Invoke-WebRequest https://github.com/wjdob/realme-ota/blob/master/Install.ps1 | Invoke-Expression
 ```
 
 ### Linux
 ```bash
 sudo apt install python3-pip
-pip3 install --upgrade git+https://github.com/R0rt1z2/realme-ota
+pip3 install --upgrade git+https://github.com/wjdob/realme-ota
 ```
 
 ## Usage
