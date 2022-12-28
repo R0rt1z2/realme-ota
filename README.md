@@ -8,10 +8,10 @@
 
 ## Installation
 ### Windows
-For convenience, a script has been provided to take care of installing all the requirements and the tool automatically (this has only been tested under Windows 10 and 11 using [Windows Terminal](https://github.com/microsoft/terminal)).
+Required [Windows Terminal](https://github.com/microsoft/terminal) or [PowerShell](https://github.com/PowerShell/PowerShell).
 ```powershell
-# (Requires privilegies)
-Invoke-WebRequest https://cdn.r0rt1z2.com/realme-ota/Install.ps1 | Invoke-Expression
+# (Requires privileges - start Terminal/PowerShell as administrator)
+Invoke-WebRequest https://raw.githubusercontent.com/R0rt1z2/realme-ota/master/Install.ps1 -OutFile .\Install.ps1; .\Install.ps1
 ```
 
 ### Linux
