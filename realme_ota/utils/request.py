@@ -53,8 +53,15 @@ class Request:
         self.key = None
         self.body = None
         self.headers = dict()
-
-        self.url = data.urls[int(rui_version)][int(region)]
+        
+        if model in ['OnePlus', 'oneplus', 'Oneplus']:
+            # OnePlus uses the same server no matter what the Android Version is.
+            # I'm not sure if they have more endpoints so hardcode the known URL.
+            self.url = 'https://otag.h2os.com/post/Query_Update'
+        elif rui_version >= 2 and req_version == 2:
+            self.url = data.server_params[region]['serverURL']
+        else:
+            self.url = data.urls[int(rui_version)][int(region)]
 
     def encrypt(self, buf):
         if self.properties.get('rui_version') == 1:
@@ -128,13 +135,6 @@ class Request:
             self.properties['otaPrefix'] = '_'.join(self.properties.get('otaVersion').split('_')[:2])
 
         self.resp_key = 'resps' if rui_version == 1 else 'body'
-
-        #
-        # OnePlus uses the same server no matter what the Android Version is.
-        # I'm not sure if they have more endpoints so hardcode the known URL.
-        #
-        if self.properties['productName'] in ['OnePlus', 'oneplus', 'Oneplus']:
-            self.url = 'https://otag.h2os.com/post/Query_Update'
         
         self.properties['time'] = int(time() * 1000)    # Time in ms
     
@@ -156,7 +156,6 @@ class Request:
             self.body = json.dumps({'params': json.dumps({'cipher': cipher, 'iv': iv})})
             
             region = self.properties.get('region', 0)
-            self.url = data.server_params[region]['serverURL']
             protectedKey = crypto.generate_protectedKey(self.key, data.server_params[region]['pubKey'])
             negotiationVersion = data.server_params[region]['negotiationVersion']
             version = self.properties['time'] + (86400 * 1000)  # 1 day in the future
