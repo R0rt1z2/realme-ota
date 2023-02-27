@@ -16,6 +16,7 @@
 #
 
 import json
+from time import time
 
 try:
     from utils import data
@@ -25,7 +26,8 @@ except ImportError:
     from realme_ota.utils import crypto
 
 class Request:
-    def __init__(self, model=None, ota_version=None, nv_identifier=None, rui_version=None, region=None, deviceId=None, imei0=None, imei1=None, beta=False):
+    def __init__(self, req_version = 1, model=None, ota_version=None, nv_identifier=None,
+        rui_version=None, region=None, deviceId=None, imei0=None, imei1=None, beta=False):
         self.properties = {
             'model': model,
             'productName': model,
@@ -37,22 +39,39 @@ class Request:
             'imei': imei0,
             'imei1': imei1
         }
-        if beta:
-            self.properties['mode'] = '1'
+        self.beta = beta
+        self.req_version = req_version
+        if deviceId:
+            self.properties['deviceId'] = crypto.sha256(deviceId)   # This is done by the OTA application on the phone
+        elif imei0:
+            self.properties['deviceId'] = crypto.sha256(imei0)  # This is done by the realme update tool companion app
+        else:
+            self.properties['deviceId'] = crypto.sha256(default_headers['deviceId'])
         if rui_version == 1:
             self.properties['version'] = '2'
+        
+        self.key = None
         self.body = None
         self.headers = dict()
 
         self.url = data.urls[int(rui_version)][int(region)]
 
     def encrypt(self, buf):
-        return (crypto.encrypt_ecb(buf) if self.properties.get('rui_version') <= 1 \
-            else crypto.encrypt_ctr(buf))
+        if self.properties.get('rui_version') == 1:
+            return crypto.encrypt_ecb(buf), None, None
+        elif self.req_version == 2:
+            return crypto.encrypt_ctr_v2(buf)
+        else:
+            return crypto.encrypt_ctr(buf), None, None
 
     def decrypt(self, buf):
-        return (crypto.decrypt_ecb(buf) if self.properties.get('rui_version') <= 1 \
-            else crypto.decrypt_ctr(buf))
+        if self.properties.get('rui_version') == 1:
+            return crypto.decrypt_ecb(buf)
+        elif self.req_version == 2:
+            body_object = json.loads(buf)
+            return crypto.decrypt_ctr_v2(body_object['cipher'], self.key, body_object['iv'])
+        else:
+            return crypto.decrypt_ctr(buf)
 
     def set_vars(self):
         region = self.properties.get('region')
@@ -116,21 +135,38 @@ class Request:
         #
         if self.properties['productName'] in ['OnePlus', 'oneplus', 'Oneplus']:
             self.url = 'https://otag.h2os.com/post/Query_Update'
-
-    def set_body(self):
+        
+        self.properties['time'] = int(time() * 1000)    # Time in ms
+    
+    def set_body_headers(self):
         new_body = dict()
+        
         for entry in list(data.default_body.keys()):
             new_body[entry] = self.properties.get(entry) or data.default_body[entry]
-
-        self.body = json.dumps({'params': self.encrypt(json.dumps(new_body))})
-        return new_body
-
-    def set_hdrs(self):
+            if entry == 'mode' and self.beta:
+                new_body[entry] = '1'
+        
         for entry in list(data.default_headers.keys()):
             self.headers[entry] = self.properties.get(entry) or data.default_headers[entry]
-            if entry == "deviceId":
-                self.headers[entry] = crypto.sha256(self.headers[entry])
-        return self.headers
+        
+        if self.req_version == 2:
+            self.headers['version'] = '2'
+            
+            cipher, iv, self.key = self.encrypt(json.dumps(new_body))
+            self.body = json.dumps({'params': json.dumps({'cipher': cipher, 'iv': iv})})
+            
+            region = self.properties.get('region', 0)
+            self.url = data.server_params[region]['serverURL']
+            protectedKey = crypto.generate_protectedKey(self.key, data.server_params[region]['pubKey'])
+            negotiationVersion = data.server_params[region]['negotiationVersion']
+            version = self.properties['time'] + (86400 * 1000)  # 1 day in the future
+            
+            self.headers['protectedKey'] = json.dumps({'SCENE_1': {'protectedKey': protectedKey,'version': version,'negotiationVersion': negotiationVersion}})
+        else:
+            cipher = self.encrypt(json.dumps(new_body))[0]
+            self.body = json.dumps({'params': cipher})
+        
+        return self.body, self.headers
 
     def validate_response(self, response):
         if response.status_code != 200 or 'responseCode' in json.loads(response.content) and json.loads(response.content)['responseCode'] != 200:

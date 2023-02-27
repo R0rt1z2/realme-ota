@@ -21,9 +21,11 @@ import hashlib
 from base64 import b64decode, b64encode
 from random import randint, choices
 
-from Crypto.Cipher import AES
+from Crypto.Cipher import AES, PKCS1_OAEP
+from Crypto.PublicKey import RSA
 from Crypto.Util import Counter
 from Crypto.Util.Padding import unpad, pad
+from Crypto.Random import get_random_bytes
 
 keys = ["oppo1997", "baed2017", "java7865", "231uiedn", "09e32ji6",
         "0oiu3jdy", "0pej387l", "2dkliuyt", "20odiuye", "87j3id7w"]
@@ -31,13 +33,53 @@ keys = ["oppo1997", "baed2017", "java7865", "231uiedn", "09e32ji6",
 def getKey(key):
     return (keys[int(key[0])] + key[4:12]).encode('utf-8')
 
+def getRandomKey():
+    return get_random_bytes(32) # AES-256 key
+
+def getIV():
+    return get_random_bytes(16) # AES IV
+
+def enc_dec_AES_CTR(data, key, iv, mode):
+    ctr = Counter.new(128, initial_value=int.from_bytes(iv, 'big'))
+    cipher = AES.new(key, AES.MODE_CTR, counter=ctr)
+    if mode == 'encrypt':
+        return cipher.encrypt(data)
+    else:
+        return cipher.decrypt(data)
+
+def enc_AES_CTR(data, key, iv):
+    return enc_dec_AES_CTR(data, key, iv, 'encrypt')
+
+def dec_AES_CTR(data, key, iv):
+    return enc_dec_AES_CTR(data, key, iv, 'decrypt')
+
+def enc_dec_AES_ECB(data, key, mode):
+    cipher = AES.new(key, AES.MODE_ECB)
+    if mode == 'encrypt':
+        return cipher.encrypt(pad(data, AES.block_size))
+    else:
+        return unpad(cipher.decrypt(data), AES.block_size)
+
+def enc_AES_ECB(data, key):
+    return enc_dec_AES_ECB(data, key, 'encrypt')
+
+def dec_AES_ECB(data, key):
+    return enc_dec_AES_ECB(data, key, 'decrypt')
+
+def encrypt_ctr_v2(data):
+    key = getRandomKey()
+    iv = getIV()
+    encrypted = enc_AES_CTR(data.encode('utf-8'), key, iv)
+    return b64encode(encrypted).decode('utf-8'), b64encode(iv).decode('utf-8'), b64encode(key).decode('utf-8')
+
+def decrypt_ctr_v2(data, key, iv):
+    return dec_AES_CTR(b64decode(data.encode('utf-8')), b64decode(key.encode('utf-8')), b64decode(iv.encode('utf-8')))
+
 def encrypt_ctr(buf):
     key_pseudo = str(randint(0, 9)) + ''.join(choices(string.digits, k=14))
     key_real = getKey(key_pseudo)
-
-    ctr = Counter.new(128, initial_value=int.from_bytes(hashlib.md5(key_real).digest(), "big"))
-    cipher = AES.new(key_real, AES.MODE_CTR, counter=ctr)
-    encrypted = cipher.encrypt(buf.encode("utf-8"))
+    
+    encrypted = enc_AES_CTR(buf.encode('utf-8'), key_real, hashlib.md5(key_real).digest())
 
     return b64encode(encrypted).decode('utf-8') + key_pseudo
 
@@ -45,28 +87,34 @@ def decrypt_ctr(buf):
     data = b64decode(buf[:-15])
     key_real = getKey(buf[-15:])
 
-    ctr = Counter.new(128, initial_value=int.from_bytes(hashlib.md5(key_real).digest(), "big"))
-    cipher = AES.new(key_real, AES.MODE_CTR, counter=ctr)
+    decrypted = dec_AES_CTR(data, key_real, hashlib.md5(key_real).digest())
 
-    return cipher.decrypt(data).decode("utf-8")
+    return decrypted.decode('utf-8')
 
 def encrypt_ecb(buf):
     key_pseudo = str(randint(0, 9)) + ''.join(choices(string.ascii_letters + string.digits, k=14))
     key_real = getKey(key_pseudo)
-
-    cipher = AES.new(key_real, AES.MODE_ECB)
-    encrypted = cipher.encrypt(pad(buf.encode('utf-8'), AES.block_size))
-
+    
+    encrypted = enc_AES_ECB(buf.encode('utf-8'), key_real)
+    
     return b64encode(encrypted).decode('utf-8') + key_pseudo
 
 def decrypt_ecb(buf):
     data = b64decode(buf[:-15])
     key = getKey(buf[-15:])
-
-    cipher = AES.new(key, AES.MODE_ECB)
-    plain = unpad(cipher.decrypt(data), AES.block_size)
+    
+    plain = dec_AES_ECB(data, key)
 
     return plain.decode('utf-8')
 
 def sha256(data):
     return hashlib.sha256(data.encode('utf-8')).hexdigest().upper()
+
+def encrypt_rsa(data, pub_key):
+    key = RSA.import_key(pub_key)
+    cipher = PKCS1_OAEP.new(key)
+    return cipher.encrypt(data)
+
+def generate_protectedKey(key, pub_key):
+    encrypted = encrypt_rsa(key.encode('utf-8'), b64decode(pub_key.encode('utf-8')))
+    return b64encode(encrypted).decode('utf-8')
