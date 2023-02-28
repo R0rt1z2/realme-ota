@@ -70,7 +70,7 @@ def encrypt_ctr_v2(data):
     key = getRandomKey()
     iv = getIV()
     encrypted = enc_AES_CTR(data.encode('utf-8'), key, iv)
-    return b64encode(encrypted).decode('utf-8'), b64encode(iv).decode('utf-8'), b64encode(key).decode('utf-8')
+    return b64encode(encrypted).decode('utf-8'), b64encode(key).decode('utf-8'), b64encode(iv).decode('utf-8')
 
 def decrypt_ctr_v2(data, key, iv):
     return dec_AES_CTR(b64decode(data.encode('utf-8')), b64decode(key.encode('utf-8')), b64decode(iv.encode('utf-8')))

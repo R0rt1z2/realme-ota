@@ -156,7 +156,7 @@ class Request:
         if self.req_version == 2:
             self.headers['version'] = '2'
             
-            cipher, iv, self.key = self.encrypt(json.dumps(new_body))
+            cipher, self.key, iv = self.encrypt(json.dumps(new_body))
             self.body = json.dumps({'params': json.dumps({'cipher': cipher, 'iv': iv})})
             
             region = self.properties.get('region', 0)
