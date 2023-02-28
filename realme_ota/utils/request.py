@@ -26,7 +26,7 @@ except ImportError:
     from realme_ota.utils import crypto
 
 class Request:
-    def __init__(self, req_version = 1, model=None, ota_version=None, nv_identifier=None,
+    def __init__(self, req_version=1, model=None, ota_version=None, nv_identifier=None,
         rui_version=None, region=None, deviceId=None, imei0=None, imei1=None, beta=False):
         self.properties = {
             'model': model,
