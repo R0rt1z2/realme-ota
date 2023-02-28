@@ -61,7 +61,7 @@ output options:
 
 ## Additional notes
 * If your request returns `flow limit` or status code `500`, try to wait a few minutes and then request again.
-* You can set the _HTTPS_PROXY_ environment variable to send the request via a proxy (useful if an update can't be found in your country).
+* You can use the `ALL_PROXY` environment variable to send the request via a proxy (useful if an update can't be found in your country). On Windows you can run `set ALL_PROXY=ADDRESS:PORT`, while on Linux and MacOS you can do `export ALL_PROXY=ADDRESS:PORT`.
 * Since Android 11 (RUI2), Realme started using components, which means you won't be able to get a full OTA link.
 * The `--beta` option might not work correctly, it has not been fully tested!
 
