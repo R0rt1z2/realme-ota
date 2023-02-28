@@ -64,7 +64,7 @@ def main():
     )
 
     request = Request(
-        req_version = 1 if args.old_method else 2,
+        req_version = 1 if (args.old_method or args.rui_version == 1) else 2,
         model = args.product_model,
         ota_version = args.ota_version,
         rui_version = args.rui_version,
