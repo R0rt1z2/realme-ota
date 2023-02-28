@@ -23,7 +23,7 @@ pip3 install --upgrade git+https://github.com/R0rt1z2/realme-ota
 ## Usage
 ```bash
 usage: realme-ota [-h] [-v {0,1,2,3,4,5} | -s] [-r {0,1,2,3}] [-g GUID]
-               [-i IMEI [IMEI ...]] [-b] [-d DUMP] [-o ONLY]
+               [-i IMEI [IMEI ...]] [-b] [--old-method] [-d DUMP] [-o ONLY]
                product_model ota_version {1,2,3,4} [nv_identifier]
 
 positional arguments:
@@ -33,7 +33,7 @@ positional arguments:
   nv_identifier         NV (carrier) identifier (ro.build.oplus_nv_id) (if
                         none, provide 0 or omit).
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
   -v {0,1,2,3,4,5}, --verbosity {0,1,2,3,4,5}
                         Set the verbosity level. Range: 0 (no logging) to 5
@@ -51,6 +51,8 @@ request options:
   -i IMEI [IMEI ...], --imei IMEI [IMEI ...]
                         Specify one or two IMEIs for the request.
   -b, --beta            Try to get a test version (IMEI probably required).
+  --old-method          Use old method for the request (only applies if
+                        rui_version >= 2).
 
 output options:
   -d DUMP, --dump DUMP  Save request response into a file.

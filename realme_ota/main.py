@@ -51,6 +51,7 @@ def main():
     req_opts.add_argument("-g", "--guid", type=str, default="0", help="The guid of the third line in the file /data/system/openid_config.xml (only required to extract 'CBT' in China).")
     req_opts.add_argument("-i", "--imei", type=str, nargs='+', help="Specify one or two IMEIs for the request.")
     req_opts.add_argument("-b", "--beta", action='store_true', help="Try to get a test version (IMEI probably required).")
+    req_opts.add_argument("--old-method", action='store_true', help="Use old method for the request (only applies if rui_version >= 2).")
     # Output settings
     out_opts = parser.add_argument_group("output options")
     out_opts.add_argument("-d", "--dump", type=str, help="Save request response into a file.")
@@ -63,6 +64,7 @@ def main():
     )
 
     request = Request(
+        req_version = 1 if args.old_method else 2,
         model = args.product_model,
         ota_version = args.ota_version,
         rui_version = args.rui_version,
@@ -77,13 +79,13 @@ def main():
     logger.log(f"Load payload for {args.product_model} (RealmeUI V{args.rui_version})")
     try:
         request.set_vars()
-        req_hdrs = request.set_hdrs()
-        req_body = request.set_body()
+        req_body, req_hdrs, plain_body = request.set_body_headers()
     except Exception as e:
         logger.die(f"Something went wrong while setting the request variables :( ({e})!", 2)
     
     logger.log(f"Request headers:\n{json.dumps(req_hdrs, indent=4, sort_keys=True, ensure_ascii=False)}", 5)
-    logger.log(f"Request body:\n{json.dumps(req_body, indent=4, sort_keys=True, ensure_ascii=False)}", 5)
+    logger.log(f"Request body:\n{json.dumps(plain_body, indent=4, sort_keys=True, ensure_ascii=False)}", 5)
+    logger.log(f"Encrypted body:\n{json.dumps(req_body, indent=4, sort_keys=True, ensure_ascii=False)}", 5)
     
     logger.log("Wait for the endpoint to reply")
     try:
@@ -103,7 +105,9 @@ def main():
 
     logger.log("Let's rock")
     try:
-        content = json.loads(request.decrypt(json.loads(response.content)[request.resp_key]))
+        json_response = json.loads(response.content)
+        logger.log(f"Response:\n{json.dumps(json_response, indent=4, sort_keys=True, ensure_ascii=False)}", 5)
+        content = json.loads(request.decrypt(json_response[request.resp_key]))
     except Exception as e:
         logger.die(f"Something went wrong while parsing the response :( {e}!", 2)
 
