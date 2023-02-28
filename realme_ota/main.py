@@ -79,12 +79,13 @@ def main():
     logger.log(f"Load payload for {args.product_model} (RealmeUI V{args.rui_version})")
     try:
         request.set_vars()
-        req_body, req_hdrs = request.set_body_headers()
+        req_body, req_hdrs, plain_body = request.set_body_headers()
     except Exception as e:
         logger.die(f"Something went wrong while setting the request variables :( ({e})!", 2)
     
     logger.log(f"Request headers:\n{json.dumps(req_hdrs, indent=4, sort_keys=True, ensure_ascii=False)}", 5)
-    logger.log(f"Request body:\n{json.dumps(req_body, indent=4, sort_keys=True, ensure_ascii=False)}", 5)
+    logger.log(f"Request body:\n{json.dumps(plain_body, indent=4, sort_keys=True, ensure_ascii=False)}", 5)
+    logger.log(f"Encrypted body:\n{json.dumps(req_body, indent=4, sort_keys=True, ensure_ascii=False)}", 5)
     
     logger.log("Wait for the endpoint to reply")
     try:

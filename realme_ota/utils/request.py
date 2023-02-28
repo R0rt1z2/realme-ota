@@ -50,10 +50,6 @@ class Request:
         if rui_version == 1:
             self.properties['version'] = '2'
         
-        self.key = None
-        self.body = None
-        self.headers = dict()
-        
         if model in ['OnePlus', 'oneplus', 'Oneplus']:
             # OnePlus uses the same server no matter what the Android Version is.
             # I'm not sure if they have more endpoints so hardcode the known URL.
@@ -62,6 +58,12 @@ class Request:
             self.url = data.server_params[region]['serverURL']
         else:
             self.url = data.urls[int(rui_version)][int(region)]
+        
+        self.resp_key = 'resps' if rui_version == 1 else 'body'
+        
+        self.key = None
+        self.body = None
+        self.headers = dict()
 
     def encrypt(self, buf):
         if self.properties.get('rui_version') == 1:
@@ -134,9 +136,11 @@ class Request:
         self.properties['romPrefix'] = self.properties['romVersion'] = \
             self.properties['otaPrefix'] = '_'.join(self.properties.get('otaVersion').split('_')[:2])
 
-        self.resp_key = 'resps' if rui_version == 1 else 'body'
-        
-        self.properties['time'] = int(time() * 1000)    # Time in ms
+        #
+        # @name(s): time
+        # @value(s): Current system time in milliseconds
+        #
+        self.properties['time'] = str(int(time() * 1000))
     
     def set_body_headers(self):
         new_body = dict()
@@ -158,14 +162,14 @@ class Request:
             region = self.properties.get('region', 0)
             protectedKey = crypto.generate_protectedKey(self.key, data.server_params[region]['pubKey'])
             negotiationVersion = data.server_params[region]['negotiationVersion']
-            version = self.properties['time'] + (86400 * 1000)  # 1 day in the future
+            version = str(int(self.properties['time']) + (86400 * 1000))  # 1 day in the future
             
-            self.headers['protectedKey'] = json.dumps({'SCENE_1': {'protectedKey': protectedKey,'version': version,'negotiationVersion': negotiationVersion}})
+            self.headers['protectedKey'] = json.dumps({'SCENE_1': {'protectedKey': protectedKey, 'version': version, 'negotiationVersion': negotiationVersion}})
         else:
             cipher = self.encrypt(json.dumps(new_body))[0]
             self.body = json.dumps({'params': cipher})
         
-        return self.body, self.headers
+        return self.body, self.headers, new_body
 
     def validate_response(self, response):
         if response.status_code != 200 or 'responseCode' in json.loads(response.content) and json.loads(response.content)['responseCode'] != 200:
