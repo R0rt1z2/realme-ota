@@ -50,10 +50,12 @@ class Request:
         if rui_version == 1:
             self.properties['version'] = '2'
         
-        if model in ['OnePlus', 'oneplus', 'Oneplus']:
+        if 'oneplus' in model.lower():
             # OnePlus uses the same server no matter what the Android Version is.
             # I'm not sure if they have more endpoints so hardcode the known URL.
             self.url = 'https://otag.h2os.com/post/Query_Update'
+            # Yes they does have more endpoints
+            self.url = 'https://component-ota-cn.allawntech.com/update/v2'
         elif rui_version >= 2 and req_version == 2:
             self.url = data.server_params[region]['serverURL']
         else:
@@ -155,7 +157,8 @@ class Request:
         
         if self.req_version == 2:
             self.headers['version'] = '2'
-            
+            self.headers['mode'] = 'manual' # client_auto not work for Oneplus
+
             cipher, self.key, iv = self.encrypt(json.dumps(new_body))
             self.body = json.dumps({'params': json.dumps({'cipher': cipher, 'iv': iv})})
             
