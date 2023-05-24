@@ -27,7 +27,7 @@ except ImportError:
 
 class Request:
     def __init__(self, req_version=1, model=None, ota_version=None, nv_identifier=None,
-        rui_version=None, region=None, deviceId=None, imei0=None, imei1=None, beta=False):
+        rui_version=None, region=None, deviceId=None, imei0=None, imei1=None, beta=False, language=None):
         self.properties = {
             'model': model,
             'productName': model,
@@ -63,6 +63,9 @@ class Request:
             self.url = data.urls[int(rui_version)][int(region)]
         
         self.resp_key = 'resps' if rui_version == 1 else 'body'
+
+        if language is not None:
+            self.properties['language'] = language
         
         self.key = None
         self.body = None
@@ -100,7 +103,7 @@ class Request:
         # @name(s): language
         # @value(s): LOCALE
         #
-        if region == 1:
+        if region == 1 and not self.properties.get('language'):
             self.properties['language'] = 'zh-CN'
 
         #
