@@ -11,7 +11,7 @@
 Required [Windows Terminal](https://github.com/microsoft/terminal) or [PowerShell](https://github.com/PowerShell/PowerShell).
 ```powershell
 # (Requires privileges - start Terminal/PowerShell as administrator)
-Invoke-WebRequest https://raw.githubusercontent.com/R0rt1z2/realme-ota/master/Install.ps1 -OutFile .\Install.ps1; .\Install.ps1
+Invoke-WebRequest https://raw.githubusercontent.com/R0rt1z2/realme-ota/master/Install.ps1 | Invoke-Expression
 ```
 
 ### Linux
