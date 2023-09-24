@@ -1,0 +1,16 @@
+LICENSE
+README.md
+realme-ota
+setup.py
+realme_ota/__init__.py
+realme_ota/main.py
+realme_ota.egg-info/PKG-INFO
+realme_ota.egg-info/SOURCES.txt
+realme_ota.egg-info/dependency_links.txt
+realme_ota.egg-info/requires.txt
+realme_ota.egg-info/top_level.txt
+realme_ota/utils/__init__.py
+realme_ota/utils/crypto.py
+realme_ota/utils/data.py
+realme_ota/utils/logger.py
+realme_ota/utils/request.py

@@ -1,0 +1,8 @@
+Metadata-Version: 2.1
+Name: realme-ota
+Version: 4.0
+Summary: CLI tool to receive requests from Realme's OTA endpoint.
+Home-page: https://github.com/R0rt1z2/realme-ota
+Author: Roger Ortiz
+Author-email: 
+License-File: LICENSE
