@@ -57,7 +57,7 @@ class Request:
         elif rui_version >= 2 and req_version == 2:
             self.url = data.server_params[region]['serverURL']
         else:
-            self.url = data.urls[int(rui_version)][int(region)]
+            self.url = data.urls[min(rui_version, 3)][region]   # Starting from RUI version 3, the URL is the same
         
         self.resp_key = 'resps' if rui_version == 1 else 'body'
 
@@ -107,13 +107,16 @@ class Request:
         # @name(s): androidVersion
         # @value(s): Android{Version}
         #
-        self.properties['androidVersion'] = 'Android' + ('10.0' if rui_version == 1 else '11.0' if rui_version == 2 else '12.0' if rui_version == 3 else '13.0')
+        self.properties['androidVersion'] = 'Android' + str(10 + rui_version - 1) + ".0"    # RUI version 1 is Android10
 
         #
         # @name(s): colorOSVersion
         # @value(s): ColorOS{Version}
         #
-        self.properties['colorOSVersion'] = 'ColorOS' + ('7' if rui_version == 1 else '11' if rui_version == 2 else '12' if rui_version == 3 else '13')
+        if rui_version == 1:
+            self.properties['colorOSVersion'] = 'ColorOS7'
+        else:
+            self.properties['colorOSVersion'] = 'ColorOS' + str(11 + rui_version - 2)   # RUI version 2 is ColorOS11
 
         #
         # @name(s): nvCarrer, partCarrier, localCarrier
