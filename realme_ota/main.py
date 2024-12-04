@@ -43,7 +43,7 @@ def main():
     # Positional arguments
     parser.add_argument("product_model", type=str, help="Product Model (ro.product.name).")
     parser.add_argument("ota_version", help="OTA Version (ro.build.version.ota).")
-    parser.add_argument("rui_version", type=int, choices=[1, 2, 3, 4, 5], help="RealmeUI Version (ro.build.version.realmeui).")
+    parser.add_argument("rui_version", type=int, choices=[1, 2, 3, 4, 5, 6], help="RealmeUI Version (ro.build.version.realmeui).")
     parser.add_argument("nv_identifier", type=str, nargs='?', help="NV (carrier) identifier (ro.build.oplus_nv_id) (if none, provide 0 or omit).")
     # Request attributes
     req_opts = parser.add_argument_group("request options")
