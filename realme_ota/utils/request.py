@@ -57,7 +57,7 @@ class Request:
         elif rui_version >= 2 and req_version == 2:
             self.url = data.server_params[region]['serverURL']
         else:
-            self.url = data.urls[min(rui_version, 3)][region]   # Starting from RUI version 3, the URL is the same
+            self.url = data.urls[min(rui_version, 2)][region]   # Starting from RUI version 2, we can use the same URL
         
         self.resp_key = 'resps' if rui_version == 1 else 'body'
 
