@@ -42,7 +42,10 @@ class Request:
         self.beta = beta
         self.req_version = req_version
         if deviceId:
-            self.properties['deviceId'] = crypto.sha256(deviceId)   # This is done by the OTA application on the phone
+            if region == 1:
+                self.properties['deviceId'] = '0'
+            else:
+                self.properties['deviceId'] = crypto.sha256(deviceId)   # This is done by the OTA application on the phone
         elif imei0:
             self.properties['deviceId'] = crypto.sha256(imei0)  # This is done by the realme update tool companion app
         else:
