@@ -98,8 +98,8 @@ def main():
     try:
         request.validate_response(response)
     except Exception as e:
-        if args.ota_version[-17:] != '0000_000000000000':
-            sys.argv[sys.argv.index(args.ota_version)] = args.ota_version[:-17] + '0000_000000000000'
+        if args.ota_version[-17:] != '0001_000000000001':
+            sys.argv[sys.argv.index(args.ota_version)] = args.ota_version[:-17] + '0001_000000000001'
             os.execl(sys.executable, sys.executable, *sys.argv)
         logger.die(f'{e}', 1)
     else:
