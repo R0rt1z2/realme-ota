@@ -42,14 +42,11 @@ class Request:
         self.beta = beta
         self.req_version = req_version
         if deviceId:
-            if region == 1:
-                self.properties['deviceId'] = '0'
-            else:
-                self.properties['deviceId'] = crypto.sha256(deviceId)   # This is done by the OTA application on the phone
+            self.properties['deviceId'] = crypto.sha256(deviceId)   # This is done by the OTA application on the phone
         elif imei0:
             self.properties['deviceId'] = crypto.sha256(imei0)  # This is done by the realme update tool companion app
         else:
-            self.properties['deviceId'] = crypto.sha256(default_headers['deviceId'])
+            self.properties['deviceId'] = crypto.sha256(data.default_headers['imei'])
         if rui_version == 1:
             self.properties['version'] = '2'
         
@@ -181,11 +178,10 @@ class Request:
         return self.body, self.headers, new_body
 
     def validate_response(self, response):
-        if response.status_code != 200 or 'responseCode' in json.loads(response.content) and json.loads(response.content)['responseCode'] != 200:
-            if response.status_code != 200:
-                raise RuntimeError(f"Response status mismatch, expected '200' got '{response.status_code}'!")
-            else:
-                raise RuntimeError(f"Response status mismatch, expected '200' got '{json.loads(response.content)['responseCode']}' ({json.loads(response.content)['errMsg']})!")
+        if response.status_code != 200:
+            raise RuntimeError(f"Response status mismatch, expected '200' got '{response.status_code}'!")
+        elif json.loads(response.content).get('responseCode', 200) != 200:
+            raise RuntimeError(f"Response status mismatch, expected '200' got '{json.loads(response.content)['responseCode']}' ({json.loads(response.content)['errMsg']})!")
 
     def validate_content(self, content):
         if 'checkFailReason' in content and content['checkFailReason'] != None:

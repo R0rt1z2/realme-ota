@@ -48,7 +48,7 @@ def main():
     # Request attributes
     req_opts = parser.add_argument_group("request options")
     req_opts.add_argument("-r", "--region", type=int, choices=[0, 1, 2, 3], default=0, help="Use custom region for the request (GL = 0, CN = 1, IN = 2, EU = 3).")
-    req_opts.add_argument("-g", "--guid", type=str, default="0", help="The guid of the third line in the file /data/system/openid_config.xml (only required to extract 'CBT' in China).")
+    req_opts.add_argument("-g", "--guid", type=str, default=None, help="The guid of the third line in the file /data/system/openid_config.xml (only required to extract 'CBT' in China).")
     req_opts.add_argument("-i", "--imei", type=str, nargs='+', help="Specify one or two IMEIs for the request.")
     req_opts.add_argument("-b", "--beta", action='store_true', help="Try to get a test version (IMEI probably required).")
     req_opts.add_argument("-l", "--language", type=str, default=None, help="Specify the language of response (en-EN by default, zh-CN in China).")
@@ -98,6 +98,9 @@ def main():
     try:
         request.validate_response(response)
     except Exception as e:
+        if response.content:
+            json_response = json.loads(response.content)
+            logger.log(f"Response:\n{json.dumps(json_response, indent=4, sort_keys=True, ensure_ascii=False)}", 5)
         if args.ota_version[-17:] != '0001_000000000001':
             sys.argv[sys.argv.index(args.ota_version)] = args.ota_version[:-17] + '0001_000000000001'
             os.execl(sys.executable, sys.executable, *sys.argv)
